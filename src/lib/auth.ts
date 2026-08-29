@@ -12,10 +12,19 @@ export type { SessionUser };
  * The signing itself lives in `session-token.ts` so middleware can reuse it.
  */
 
+/**
+ * A `Secure` cookie is silently dropped by the browser over plain HTTP, which
+ * lets a login look like it succeeded and then bounce straight back to the
+ * login screen. So this follows the scheme we are actually served on rather
+ * than NODE_ENV. Put TLS in front and set NEXT_PUBLIC_SITE_URL to the https
+ * origin to turn it back on — a rebuild is needed, the value is inlined.
+ */
+const secureCookies = (process.env.NEXT_PUBLIC_SITE_URL ?? "").startsWith("https://");
+
 const cookieOptions = {
   httpOnly: true,
   sameSite: "lax",
-  secure: process.env.NODE_ENV === "production",
+  secure: secureCookies,
   path: "/",
 } as const;
 
