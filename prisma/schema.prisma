@@ -1,0 +1,231 @@
+// The Maker — data model
+// MongoDB via Prisma. Schema changes are applied with `npm run db:push`
+// (Prisma Migrate does not support MongoDB).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------- enums
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  IN_PRODUCTION
+  SHIPPED
+  COMPLETED
+  CANCELLED
+}
+
+enum MessageStatus {
+  NEW
+  READ
+  REPLIED
+  ARCHIVED
+}
+
+enum MessageTopic {
+  GENERAL
+  COMMISSION
+  REPAIR
+  ORDER
+  PRESS
+  VISIT
+}
+
+// ---------------------------------------------------------------- auth
+
+model User {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         Role      @default(EDITOR)
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("users")
+}
+
+// A login throttle bucket, keyed by email or client IP.
+model LoginAttempt {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  key         String    @unique
+  count       Int       @default(0)
+  firstAt     DateTime  @default(now())
+  lockedUntil DateTime?
+
+  @@map("login_attempts")
+}
+
+// ------------------------------------------------------------------ images
+
+// An uploaded photograph. The bytes live in Mongo rather than in an object
+// store, so the app keeps its single piece of infrastructure — the 16 MB
+// document ceiling is ample for the 5 MB an upload is allowed to be. The
+// bytes are read by `/api/images/[id]` and by nothing else.
+model Image {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  data      Bytes
+  mimeType  String
+  width     Int
+  height    Int
+  bytes     Int
+  createdAt DateTime @default(now())
+
+  @@map("images")
+}
+
+// What a page needs to lay a photograph out, kept on the piece that uses it so
+// that a listing of twenty-four products reads no image documents at all.
+type ImageRef {
+  id     String @db.ObjectId
+  width  Int
+  height Int
+  alt    String
+}
+
+// ---------------------------------------------------------------- catalogue
+
+model Product {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  slug           String        @unique
+  name           String
+  reference      String // e.g. "01 / 24"
+  material       String
+  collection     String        @default("Catalogue")
+  summary        String // one line, used in listings and meta description
+  description    String // markdown, long form
+  priceCents     Int
+  currency       String        @default("MAD")
+  stock          Int           @default(0)
+  leadTime       String        @default("Ships in 5 working days")
+  dimensions     String?
+  weight         String?
+  care           String?
+  imageSlot      String        @default("[ product ]")
+  images         ImageRef[]
+  specs          Spec[]
+  status         ContentStatus @default(PUBLISHED)
+  featured       Boolean       @default(false)
+  sortIndex      Int           @default(0)
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status, sortIndex])
+  @@index([featured])
+  @@map("products")
+}
+
+type Spec {
+  label String
+  value String
+}
+
+// ---------------------------------------------------------------- journal
+
+model Post {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  slug           String        @unique
+  title          String
+  category       String        @default("Workshop")
+  excerpt        String
+  body           String // markdown
+  readMinutes    Int           @default(5)
+  author         String        @default("The Maker")
+  tags           String[]      @default([])
+  imageSlot      String        @default("[ journal image ]")
+  image          ImageRef?
+  status         ContentStatus @default(DRAFT)
+  featured       Boolean       @default(false)
+  publishedAt    DateTime?
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status, publishedAt])
+  @@map("posts")
+}
+
+// ---------------------------------------------------------------- orders
+
+type OrderItem {
+  productId String @db.ObjectId
+  slug      String
+  name      String
+  material  String
+  reference String
+  unitCents Int
+  quantity  Int
+}
+
+type ShippingAddress {
+  line1      String
+  line2      String?
+  city       String
+  postalCode String
+  country    String
+}
+
+model Order {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  number        String      @unique // e.g. TM-2604-0007
+  customerName  String
+  customerEmail String
+  customerPhone String?
+  address       ShippingAddress
+  items         OrderItem[]
+  subtotalCents Int
+  shippingCents Int         @default(0)
+  totalCents    Int
+  currency      String      @default("MAD")
+  status        OrderStatus @default(PENDING)
+  customerNote  String?
+  internalNote  String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([status, createdAt])
+  @@index([customerEmail])
+  @@map("orders")
+}
+
+// ---------------------------------------------------------------- inbox
+
+model Message {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String
+  topic     MessageTopic  @default(GENERAL)
+  subject   String
+  body      String
+  status    MessageStatus @default(NEW)
+  reply     String?
+  repliedAt DateTime?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([status, createdAt])
+  @@map("messages")
+}

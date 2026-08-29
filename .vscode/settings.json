@@ -1,0 +1,10 @@
+{
+  // Console Ninja's Turbopack support is a preview feature. It patches the
+  // Next.js dev server and, on this project, serves truncated node_modules
+  // chunks — React never hydrates and every button on the site is inert.
+  // Leave its Next.js instrumentation off here; the rest of the extension
+  // still works elsewhere.
+  "console-ninja.toolsToEnableSupportAutomaticallyFor": {
+    "next.js": false
+  }
+}
