@@ -49,7 +49,7 @@ export const posts: SeedPost[] = [
     featured: true,
     daysAgo: 12,
     cluster: "care",
-    products: ["door-pull-long", "forged-bowl-no-4"],
+    products: [],
     takeaways: [
       "Plating is a separate thin layer of metal; where it wears through, the base metal underneath corrodes faster and the finish goes patchy.",
       "Lacquer fails more slowly but the same way: it yellows, crazes and peels, trapping tarnish underneath.",
@@ -89,7 +89,7 @@ None of it had been maintained. That is the point. It had simply been left to re
 
 So we do not plate and we do not lacquer, and there are two things you give up for it.
 
-The first is uniformity. A bare brass [door pull](/products/door-pull-long) in a hallway will not look identical to the one at the far end, because they get touched differently. If matching matters more to you than ageing, we are the wrong workshop.
+The first is uniformity. A bare brass door pull in a hallway will not look identical to the one at the far end, because they get touched differently. If matching matters more to you than ageing, we are the wrong workshop.
 
 The second is the ability to freeze the object at the moment you bought it. Bare metal moves. Within a few weeks it will have shifted; within a year it will be a different colour than the photograph — we wrote down [the whole twelve-month patina timeline](/journal/living-with-a-patina) so you know what to expect.
 
@@ -118,7 +118,7 @@ The same reasoning applies to every metal we work — if you are unsure which on
     featured: true,
     daysAgo: 27,
     cluster: "craft",
-    products: ["forged-bowl-no-4", "forged-bowl-no-2", "bowl-no-8-large"],
+    products: [],
     takeaways: [
       "A raised bowl is hammered from a flat brass disc over a steel stake; no metal is cut away, it is moved.",
       "Our bowl no. 4 takes nine steps, four heats and about five hours of work spread over two days.",
@@ -138,7 +138,7 @@ The same reasoning applies to every metal we work — if you are unsure which on
 
 ## The nine steps
 
-1. **Cut the disc.** For [bowl no. 4](/products/forged-bowl-no-4) that is a 300 mm circle of 1.5 mm brass, sheared and then filed true. A disc that is out of round stays out of round.
+1. **Cut the disc.** For bowl no. 4 that is a 300 mm circle of 1.5 mm brass, sheared and then filed true. A disc that is out of round stays out of round.
 2. **Anneal.** Heat to a dull red and quench. Brass work-hardens as you hit it; annealing puts it back to soft. You will do this between every course.
 3. **Course one.** Working from the centre outward over a stake, hammering the metal down against the steel in overlapping rings. The disc begins to dish.
 4. **Anneal again.** By the end of a course the metal rings differently under the hammer. That change in sound is the cue, not the clock.
@@ -179,7 +179,7 @@ We accept it. Every bowl that leaves here has a rim that is very slightly not fl
     featured: false,
     daysAgo: 41,
     cluster: "craft",
-    products: ["door-knocker", "thumb-latch-set"],
+    products: [],
     takeaways: [
       "Across roughly two thousand repairs of old brass hardware, almost every failure was the finish, a fastener or a badly paired bearing — almost never the metal itself.",
       "That is why we make without plating or lacquer, pair bronze with bronze in moving joints, and rivet rather than solder where a joint takes load.",
@@ -216,7 +216,7 @@ Three decisions came directly out of it, and we have not revisited any of them.
 
 **No plating, no lacquer.** The largest failure category is one we can simply decline to participate in. We explain the reasoning in [why we stopped plating anything](/journal/why-we-stopped-plating-anything).
 
-**Bronze on bronze, or bronze on steel, never steel on steel.** The [door knocker](/products/door-knocker) uses a bronze pin in a bronze bearing. Every engineer who sees it says the same metal on both faces will gall. In a hinge turning a few times a day, at hand pressure, it does not — it wears smooth and stays quiet, and it does not rust into place the way a steel pin does in a coastal winter.
+**Bronze on bronze, or bronze on steel, never steel on steel.** The door knocker uses a bronze pin in a bronze bearing. Every engineer who sees it says the same metal on both faces will gall. In a hinge turning a few times a day, at hand pressure, it does not — it wears smooth and stays quiet, and it does not rust into place the way a steel pin does in a coastal winter.
 
 **Riveted rather than soldered wherever a joint sees load.** A soldered joint is a repair you cannot make without heat, which means undoing the finish. A rivet can be tightened on a kitchen table in twenty years.
 
@@ -245,7 +245,7 @@ The rest of what the repair years taught us about making — how a bowl is raise
     featured: false,
     daysAgo: 58,
     cluster: "buying",
-    products: ["door-pull-long", "courtyard-sconce"],
+    products: [],
     takeaways: [
       "A commission has four costs — design, setup, material and making — and only making is paid per piece.",
       "For one piece, design and setup are most of the price; for forty, they are a rounding error.",
@@ -291,7 +291,7 @@ Studio Levant commissioned door pulls for a building last year: forty-two pulls,
 - Material, 61 kg bronze: about 11 000 MAD
 - Making and finishing, 42 pieces: 63 hours
 
-The first pull cost roughly 9 000 MAD to bring into existence. The forty-second cost about 1 400 MAD. Quoted as a single number the pulls came to 2 180 MAD each, which is above the catalogue price for the [standard long pull](/products/door-pull-long) and represents a considerable discount on what one bespoke pull would have cost.
+The first pull cost roughly 9 000 MAD to bring into existence. The forty-second cost about 1 400 MAD. Quoted as a single number the pulls came to 2 180 MAD each, which is above the price of our standard long pull and represents a considerable discount on what one bespoke pull would have cost.
 
 ## Why we sample above six pieces
 
@@ -324,7 +324,7 @@ If the piece is leaving Morocco, add the crate and the carrier — we explain ho
     featured: false,
     daysAgo: 74,
     cluster: "care",
-    products: ["forged-bowl-no-4", "coaster-set-of-four", "letter-tray"],
+    products: [],
     takeaways: [
       "Unlacquered brass shows fingerprints within about ten days, turns a warm gold-brown between months two and six, and settles into a stable brown by the end of the first year.",
       "The blotchy stage around months two to six is normal and evens out on its own.",
@@ -394,7 +394,7 @@ That is the whole argument for bare metal — made at more length in [why we sto
     featured: false,
     daysAgo: 96,
     cluster: "craft",
-    products: ["forged-bowl-no-4"],
+    products: [],
     takeaways: [
       "A metal surface has almost no colour of its own; what you judge is reflections, so the light you judge it under decides what you can see.",
       "A point source (a bulb, low sun) shows high contrast and hides the form; a large diffuse source like a north-facing window shows the true geometry of the surface.",

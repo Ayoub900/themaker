@@ -34,8 +34,4 @@ export const productImages: Record<string, SeedImage[]> = {
   "star-chandelier": [
     { id: "6abd4bcca1eabc363cb7c30d.jpg", alt: "Hand-pierced brass star chandelier, lit, hanging in the workshop" },
   ],
-  "forged-bowl-no-4": [
-    { id: "6a932c3f62851d8e1803cda9.png", alt: "Forged bowl no. 4" },
-    { id: "6a932c3f62851d8e1803cdaa.png", alt: "Forged bowl no. 4" },
-  ],
 };

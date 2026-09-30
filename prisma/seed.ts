@@ -163,7 +163,7 @@ async function seedPosts() {
 
 async function seedOrders() {
   const catalogue = await prisma.product.findMany({
-    where: { slug: { in: ["forged-bowl-no-4", "bench-candlestick", "serving-tray", "wall-hooks-pair"] } },
+    where: { slug: { in: ["star-chandelier"] } },
   });
   const bySlug = new Map(catalogue.map((product) => [product.slug, product]));
 
@@ -194,7 +194,7 @@ async function seedOrders() {
         postalCode: "10000",
         country: "Morocco",
       },
-      items: [line("forged-bowl-no-4", 1), line("bench-candlestick", 2)],
+      items: [line("star-chandelier", 1)],
       shippingCents: 9_000,
       status: "SHIPPED" as const,
       customerNote: "No rush — I am away until the 20th.",
@@ -212,7 +212,7 @@ async function seedOrders() {
         postalCode: "90000",
         country: "Morocco",
       },
-      items: [line("serving-tray", 1)],
+      items: [line("star-chandelier", 1)],
       shippingCents: 9_000,
       status: "IN_PRODUCTION" as const,
       customerNote: null,
@@ -230,10 +230,10 @@ async function seedOrders() {
         postalCode: "20000",
         country: "Morocco",
       },
-      items: [line("wall-hooks-pair", 6)],
+      items: [line("star-chandelier", 2)],
       shippingCents: 0,
       status: "PENDING" as const,
-      customerNote: "For the Anfa flat. Matched finish across all six please.",
+      customerNote: "For the Anfa flat — one for the entrance, one for the salon.",
       createdDaysAgo: 1,
     },
   ];

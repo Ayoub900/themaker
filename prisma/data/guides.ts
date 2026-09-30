@@ -25,7 +25,7 @@ const lightingPillar: SeedPost = {
   imageSlot: "[ journal — pierced lamps lit in the workshop ]",
   featured: true,
   daysAgo: 1,
-  products: ["star-chandelier", "courtyard-pendant", "courtyard-sconce", "reading-lamp"],
+  products: ["star-chandelier"],
   takeaways: [
     "A Moroccan brass lamp is a lamp whose shade is hand-pierced from sheet brass, so that the light passes through thousands of small openings and throws the pattern onto the walls and ceiling.",
     "The main forms are the chandelier (thurayya), the pendant, the lantern (fanous), the wall sconce and the table lamp.",
@@ -73,7 +73,7 @@ Three things, together:
 | Wall sconce | — | Corridors, stairs, either side of a bed or mirror | 20–45 cm tall |
 | Table lamp | — | Side tables, desks, a dark corner | 30–60 cm tall |
 
-Our [Star chandelier](/products/star-chandelier) is a thurayya: 1 m tall and 80 cm wide, a conical crown over a star-shaped hexagonal base. The [courtyard pendant](/products/courtyard-pendant) and [courtyard sconce](/products/courtyard-sconce) are the smaller end of the same family.
+Our [Star chandelier](/products/star-chandelier) is a thurayya: 1 m tall and 80 cm wide, a conical crown over a star-shaped hexagonal base. Pendants and wall sconces are the smaller end of the same family, and we make them [to order](/contact?topic=commission).
 
 ## How big should it be?
 
@@ -119,7 +119,7 @@ const lightingPiercing: SeedPost = {
   imageSlot: "[ journal — punching a lamp panel ]",
   featured: false,
   daysAgo: 21,
-  products: ["star-chandelier", "courtyard-sconce"],
+  products: ["star-chandelier"],
   takeaways: [
     "A Moroccan lamp is pierced by hand with small steel punches and chisels struck with a hammer, one opening at a time.",
     "The six stages are: drawing the pattern, cutting the sheet, transferring the pattern, punching, forming and assembling, then finishing.",
@@ -195,7 +195,7 @@ const lightingSize: SeedPost = {
   imageSlot: "[ journal — chandelier hung over a dining table ]",
   featured: false,
   daysAgo: 15,
-  products: ["star-chandelier", "courtyard-pendant"],
+  products: ["star-chandelier"],
   takeaways: [
     "Width: in centimetres, a chandelier's diameter should be about (room length + room width, in metres) × 8.",
     "Height of the fixture: allow roughly 20–25 cm of chandelier for every metre of ceiling height.",
@@ -254,7 +254,7 @@ Worked example: the Star chandelier is 1 m tall. Over a table 75 cm high, with 8
 
 Choose a diameter of **one-half to two-thirds of the table's width**, and keep the edge of the lamp at least 15 cm in from each side of the table. A 100 cm wide table suits a lamp of 50–65 cm.
 
-For a long table, two or three pendants in a row look better than one oversized chandelier. Leave 60–80 cm between them, and a little more at the ends. Our [courtyard pendant](/products/courtyard-pendant) is cut to your ceiling height for exactly this.
+For a long table, two or three pendants in a row look better than one oversized chandelier. Leave 60–80 cm between them, and a little more at the ends. We make pendants [to order](/contact?topic=commission) with the drop cut to your ceiling height for exactly this.
 
 ## Stairwells and double heights
 
@@ -359,7 +359,7 @@ const lightingBulb: SeedPost = {
   imageSlot: "[ journal — clear and frosted bulb, same lamp ]",
   featured: false,
   daysAgo: 8,
-  products: ["star-chandelier", "courtyard-sconce", "reading-lamp"],
+  products: ["star-chandelier"],
   takeaways: [
     "Use a clear bulb with a small filament: the smaller the light source, the sharper the pattern on the walls. Frosted bulbs blur it.",
     "Choose warm white, 2700 K. Brass already warms the light, and cooler bulbs look grey through it.",
@@ -412,7 +412,7 @@ Much of the light is stopped by the metal — that is where the pattern comes fr
 
 ## One bulb or several?
 
-Each bulb casts its own copy of the pattern. With one central bulb you get one sharp pattern. With four bulbs, you get four overlapping patterns, which read as a softer, busier texture on the walls. Large chandeliers like our [Star chandelier](/products/star-chandelier) need several bulbs to fill the shade with light; for the crispest effect in a small room, a single-bulb [sconce](/products/courtyard-sconce) or pendant is hard to beat.
+Each bulb casts its own copy of the pattern. With one central bulb you get one sharp pattern. With four bulbs, you get four overlapping patterns, which read as a softer, busier texture on the walls. Large chandeliers like our [Star chandelier](/products/star-chandelier) need several bulbs to fill the shade with light; for the crispest effect in a small room, a single-bulb sconce or pendant is hard to beat.
 
 ## Fittings and safety
 
@@ -441,7 +441,7 @@ const lightingClean: SeedPost = {
   imageSlot: "[ journal — brushing dust from a pierced panel ]",
   featured: false,
   daysAgo: 5,
-  products: ["star-chandelier", "courtyard-pendant", "courtyard-sconce"],
+  products: ["star-chandelier"],
   takeaways: [
     "Always switch off, let the lamp cool and remove the bulbs first.",
     "Dust is the main job: once a month, a soft, dry paintbrush through the piercing, or a hairdryer on cold.",
@@ -530,7 +530,7 @@ const carePillar: SeedPost = {
   imageSlot: "[ journal — polishing cloth and a half-polished bowl ]",
   featured: false,
   daysAgo: 3,
-  products: ["forged-bowl-no-4", "door-pull-long", "serving-tray", "coaster-set-of-four"],
+  products: [],
   takeaways: [
     "Solid, unlacquered brass needs only a dry cloth day to day; it will darken over months, and that is not damage.",
     "To remove tarnish, use a mild brass polish sparingly on a soft cloth, work along the surface and buff off every trace.",
@@ -633,7 +633,7 @@ const careMetals: SeedPost = {
   imageSlot: "[ journal — brass, bronze and copper offcuts side by side ]",
   featured: false,
   daysAgo: 18,
-  products: ["forged-bowl-no-4", "door-knocker", "serving-tray"],
+  products: [],
   takeaways: [
     "Copper is a pure metal. Brass is copper alloyed with zinc. Bronze is copper alloyed mainly with tin.",
     "Brass is bright yellow, bronze a darker brown-gold, copper a pinkish red.",
@@ -669,19 +669,19 @@ const careMetals: SeedPost = {
 
 ## Brass
 
-Copper and zinc. The brass we use for sheet work is 63 % copper and 37 % zinc — its standard name is CuZn37. It is the easiest of the three to cut, pierce and polish, and it has the brightest colour, which is why it is the classic metal for [Moroccan lamps](/journal/moroccan-brass-lamps-guide) and for pieces like our [forged bowl no. 4](/products/forged-bowl-no-4).
+Copper and zinc. The brass we use for sheet work is 63 % copper and 37 % zinc — its standard name is CuZn37. It is the easiest of the three to cut, pierce and polish, and it has the brightest colour, which is why it is the classic metal for [Moroccan lamps](/journal/moroccan-brass-lamps-guide) and for raised bowls and trays.
 
 It work-hardens as you hammer it and has to be softened by heating (annealing) as you go — we describe that in [anatomy of a forged bowl](/journal/anatomy-of-a-forged-bowl).
 
 ## Bronze
 
-Copper and tin, classically; modern "silicon bronze" replaces much of the tin with silicon. Bronze is harder and resists corrosion better than brass, particularly outdoors and in salt air. It casts beautifully. We use it for anything that is cast, turns, or lives outside — our [door knocker](/products/door-knocker) is bronze on bronze throughout.
+Copper and tin, classically; modern "silicon bronze" replaces much of the tin with silicon. Bronze is harder and resists corrosion better than brass, particularly outdoors and in salt air. It casts beautifully. We use it for anything that is cast, turns, or lives outside — a door knocker, for instance, is best bronze on bronze throughout.
 
 ## Copper
 
 The pure metal. Softest of the three, and the best conductor of heat, which is why it is used for cookware (tinned on the inside for food). It hammers very well and takes a deep pinkish-brown patina. Left outdoors and wet for years, copper and its alloys can form green verdigris; indoors they almost never do.
 
-Our [serving tray](/products/serving-tray) is hammered copper, tinned.
+Copper trays and pans meant for food are tinned on the inside.
 
 ## Nickel silver
 
@@ -711,7 +711,7 @@ const craftPillar: SeedPost = {
   imageSlot: "[ journal — the bench, tools laid out ]",
   featured: false,
   daysAgo: 33,
-  products: ["forged-bowl-no-4", "star-chandelier", "serving-tray"],
+  products: ["star-chandelier"],
   takeaways: [
     "Dinanderie is the craft of shaping objects from sheet copper and its alloys — brass, bronze, nickel silver — by hammering, piercing, chasing and engraving.",
     "The core techniques are raising, planishing, piercing, chasing and repoussé, engraving, and casting.",
@@ -801,7 +801,7 @@ const buyingPillar: SeedPost = {
   imageSlot: "[ journal — lanterns hanging in the souk ]",
   featured: false,
   daysAgo: 47,
-  products: ["star-chandelier", "forged-bowl-no-4", "serving-tray"],
+  products: ["star-chandelier"],
   takeaways: [
     "You can buy Moroccan metalwork in the medina souks, directly from a workshop, or online; workshops and online shops usually have fixed prices, souks expect bargaining.",
     "Before you buy, check the piece is solid metal (a magnet will not stick) and, for lamps, hand-pierced rather than machine-cut.",
@@ -857,7 +857,7 @@ The full list is in [hand-pierced or machine-cut?](/journal/real-vs-machine-made
 
 ## What things cost
 
-Our own prices, as a reference point for handmade work in solid metal: a forged brass bowl from around 1,150 MAD, a hammered copper [serving tray](/products/serving-tray) 2,750 MAD, and our [Star chandelier](/products/star-chandelier), 1 m tall and hand-pierced in solid brass, 5,000 MAD. Everything is listed with its price in the [catalogue](/products).
+Our own price, as a reference point for handmade work in solid metal: the [Star chandelier](/products/star-chandelier), 1 m tall and hand-pierced in solid brass, is 5,000 MAD. Commissions are quoted at a fixed price — see below.
 
 The cost of a handmade piece is mostly hours. That is why a large hand-pierced lamp cannot be cheap, and why a very low price is worth a second look.
 
@@ -891,7 +891,7 @@ const buyingShipping: SeedPost = {
   imageSlot: "[ journal — a chandelier crated for shipping ]",
   featured: false,
   daysAgo: 65,
-  products: ["star-chandelier", "courtyard-pendant"],
+  products: ["star-chandelier"],
   takeaways: [
     "A large chandelier is wrapped in felt, blocked so it cannot move, and packed in a made-to-measure crate or double-walled box.",
     "It travels by express courier; the price depends on the packed size and weight and on the destination, so it is quoted piece by piece.",

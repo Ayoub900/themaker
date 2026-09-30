@@ -52,7 +52,7 @@ export const marks = [
 
 export const stats = [
   { n: "25", label: "Years at the bench" },
-  { n: "24", label: "Pieces in the range" },
+  { n: "1 m", label: "Tallest piece, hand-pierced" },
   { n: "100%", label: "Made in-house" },
 ] as const;
 
@@ -64,7 +64,7 @@ export const about = {
     "For the first decade we did not make anything of our own. We repaired: door bolts, casement stays, sconces and lantern frames from houses built when the quarter was new. A century of other people’s brass passed across the bench. It is an unusual education. You learn very quickly which joints fail, which finishes lie, and which objects were made by someone who expected to be judged on them.",
     "What we learned is that almost everything that fails, fails at the finish. Plating hides the metal underneath and then flakes off it. Lacquer yellows, then peels, then traps the tarnish it was meant to prevent. The pieces that were still good after ninety years were the ones left bare — solid metal, no coating, allowed to darken.",
     "So we do not plate and we do not lacquer. A piece leaves the workshop polished or brushed or blackened, and then it is yours to age. Unlacquered brass takes a patina within months: warm where hands touch it, darker where they do not. You can polish it back whenever you like. Both states are correct.",
-    "We make twenty-four things. It is not a large range and it does not grow quickly, because a piece only joins it once we have made it enough times to know what it should cost and how long it should take. Nothing leaves the courtyard that we would not keep ourselves.",
+    "The range is small on purpose and grows slowly, because a piece only joins it once we have made it enough times to know what it should cost and how long it should take. Everything else we make to order. Nothing leaves the courtyard that we would not keep ourselves.",
   ],
   imageSlot: "[ portrait — the two makers ]",
   photo: {
@@ -77,7 +77,7 @@ export const makers = [
   {
     name: "Salma Bennani",
     role: "Forge, raising, chasing",
-    note: `Trained in the dinanderie workshops of Fès. Raises every bowl and tray in the range.`,
+    note: `Trained in the dinanderie workshops of Fès. Raises every bowl and tray we make.`,
     photo: {
       src: "/images/maker-1.jpg",
       alt: "Hands chasing a pattern into sheet metal",
@@ -169,7 +169,7 @@ export const faqs = [
   },
   {
     q: "Is the copper safe for food?",
-    a: "The serving tray is tinned on the interior, which is the traditional food-safe lining for copper. Tin wears through eventually; when it does, send the tray back and we will re-tin it at cost. The brass and bronze pieces are decorative and are not intended for acidic food.",
+    a: "Copper we make for food is tinned on the interior, which is the traditional food-safe lining. Tin wears through eventually; when it does, send the piece back and we will re-tin it at cost. The brass and bronze pieces are decorative and are not intended for acidic food.",
   },
   {
     q: "Can I visit the workshop?",
