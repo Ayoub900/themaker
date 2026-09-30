@@ -1,3 +1,4 @@
+import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -23,6 +24,16 @@ export function Markdown({
         remarkPlugins={[remarkGfm]}
         components={{
           a: ({ href, children, ...props }) => {
+            // Site-relative links are the journal's internal linking; route
+            // them client-side and let Next prefetch them like any other.
+            if (href?.startsWith("/")) {
+              return (
+                <Link href={href} {...props}>
+                  {children}
+                </Link>
+              );
+            }
+
             const external = Boolean(href && /^https?:\/\//.test(href));
             return (
               <a

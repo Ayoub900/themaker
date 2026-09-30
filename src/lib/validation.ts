@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { getCluster } from "@/config/clusters";
+
 /** Every form in the app — public and dashboard — validates through here. */
 
 const trimmed = (min: number, max: number) =>
@@ -94,6 +96,16 @@ export const postSchema = z.object({
   featured: z.boolean(),
   seoTitle: z.string().trim().max(70).optional().or(z.literal("")),
   seoDescription: z.string().trim().max(180).optional().or(z.literal("")),
+  cluster: z
+    .string()
+    .trim()
+    .refine((key) => key === "" || getCluster(key) !== null, "Pick a guide from the list.")
+    .transform((key) => key || null),
+  products: z.array(z.string().max(200)).max(8),
+  takeaways: z.array(z.string().max(400, "Keep each point under 400 characters.")).max(8),
+  faqs: z
+    .array(z.object({ q: z.string().max(300), a: z.string().max(2000) }))
+    .max(12),
 });
 
 export const orderUpdateSchema = z.object({

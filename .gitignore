@@ -12,6 +12,3 @@ next-env.d.ts
 # Ephemeral local database helper
 .local-mongo-uri
 .mongo.log
-
-# Uploaded photographs (see UPLOAD_DIR)
-/uploads

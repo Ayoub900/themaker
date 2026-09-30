@@ -14,8 +14,41 @@ import bcrypt from "bcryptjs";
 import { currency } from "../src/config/site.js";
 import { products } from "./data/products.js";
 import { posts } from "./data/posts.js";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+
+import { postImages, productImages } from "./data/images.js";
 
 const prisma = new PrismaClient();
+
+const UPLOAD_DIR = path.resolve(process.env.UPLOAD_DIR ?? "uploads");
+
+/** Pixel size of a seeded JPEG or PNG, read from its header. */
+function pixelSize(bytes: Buffer): { width: number; height: number } | null {
+  if (bytes.readUInt32BE(0) === 0x89504e47) {
+    return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+  }
+  let at = 2;
+  while (at + 9 < bytes.length && bytes[at] === 0xff) {
+    const marker = bytes[at + 1];
+    if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)) {
+      return { width: bytes.readUInt16BE(at + 7), height: bytes.readUInt16BE(at + 5) };
+    }
+    at += 2 + bytes.readUInt16BE(at + 2);
+  }
+  return null;
+}
+
+/** A seeded photograph, sized from its file — skipped if the file is missing. */
+async function seedImage(image: { id: string; alt: string }) {
+  const bytes = await readFile(path.join(UPLOAD_DIR, image.id)).catch(() => null);
+  const size = bytes ? pixelSize(bytes) : null;
+  if (!size) {
+    console.warn(`  (no upload file for ${image.id} — seeded without it)`);
+    return null;
+  }
+  return { id: image.id, alt: image.alt, ...size };
+}
 
 function daysAgo(days: number): Date {
   return new Date(Date.now() - days * 24 * 60 * 60 * 1000);
@@ -77,12 +110,15 @@ async function seedProducts() {
       seoDescription: product.summary,
     };
 
+    const images = (
+      await Promise.all((productImages[product.slug] ?? []).map(seedImage))
+    ).flatMap((image) => image ?? []);
+
     await prisma.product.upsert({
       where: { slug: product.slug },
-      // Photographs are uploaded through the dashboard, never seeded — and
-      // re-seeding must not throw away the ones that have been, so they are
-      // set on creation only.
-      create: { slug: product.slug, ...data, images: [] },
+      // Re-seeding must not throw away photographs uploaded through the
+      // dashboard since, so the seeded ones are set on creation only.
+      create: { slug: product.slug, ...data, images },
       update: data,
     });
   }
@@ -101,6 +137,10 @@ async function seedPosts() {
       author: post.author,
       tags: post.tags,
       imageSlot: post.imageSlot,
+      cluster: post.cluster,
+      products: post.products,
+      takeaways: post.takeaways,
+      faqs: post.faqs,
       status: "PUBLISHED" as const,
       featured: post.featured,
       publishedAt,
@@ -110,7 +150,11 @@ async function seedPosts() {
 
     await prisma.post.upsert({
       where: { slug: post.slug },
-      create: { slug: post.slug, ...data, image: null },
+      create: {
+        slug: post.slug,
+        ...data,
+        image: postImages[post.slug] ? await seedImage(postImages[post.slug]) : null,
+      },
       update: data,
     });
   }

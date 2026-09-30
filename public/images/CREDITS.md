@@ -22,3 +22,14 @@ Journal post images (stored in the upload folder, set from the dashboard):
 | What a commission actually costs | Minh Đức | https://unsplash.com/photos/HpWW5FDwq5M |
 | Living with a patina | Alexandr Popadin | https://unsplash.com/photos/deTriVZtaPo |
 | A north-facing window | Daniel Khilchenko | https://unsplash.com/photos/XfpcUoV49MY |
+| Moroccan brass lamps: the complete guide | Christian Buehner | https://unsplash.com/photos/zmijGtE4cdw |
+| How a Moroccan lamp is hand-pierced | Mohammed Azzouz | https://unsplash.com/photos/e1MoWr88mvE |
+| How to choose the right size of Moroccan chandelier | Point3D Commercial Imaging Ltd. | https://unsplash.com/photos/Ja24eu9Rkoc |
+| Hand-pierced or machine-cut? | Joop vd Schaaf | https://unsplash.com/photos/AXPhOyYql38 |
+| Which bulb to use in a Moroccan lamp | Rui Alves | https://unsplash.com/photos/RZW0ee28owk |
+| How to clean a Moroccan brass lamp | dmrjy | https://unsplash.com/photos/T6V_Wiykqf4 |
+| How to care for solid brass | Adhitya Sibikumar | https://unsplash.com/photos/gDAosMhYxJg |
+| Brass, bronze or copper | Angelo Casto | https://unsplash.com/photos/6M5Q6CWiahg |
+| Moroccan metalwork: a guide to dinanderie | Defne Türker | https://unsplash.com/photos/amhPxElHDPQ |
+| Buying handmade metalwork from Marrakech | Mehdi El marouazi | https://unsplash.com/photos/vU5sqT-4iOQ |
+| Shipping a Moroccan chandelier abroad | Christopher Bill | https://unsplash.com/photos/5gSAWojmSpQ |

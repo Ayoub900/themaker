@@ -128,6 +128,7 @@ const postCardSelect = {
   author: true,
   imageSlot: true,
   image: true,
+  cluster: true,
   publishedAt: true,
   featured: true,
 } as const;
@@ -149,13 +150,21 @@ export const getPostBySlug = cache(async (slug: string) => {
   });
 });
 
+/**
+ * What to read next: the same cluster first — keeping links inside the topic
+ * is the point of the cocoon — then the same category, then anything.
+ */
 export const getRelatedPosts = cache(
-  async (category: string, excludeId: string, take = 2) => {
+  async (
+    { cluster, category }: { cluster: string | null; category: string },
+    excludeId: string,
+    take = 2,
+  ) => {
     const related = await prisma.post.findMany({
       where: {
         status: "PUBLISHED",
         publishedAt: { not: null },
-        category,
+        ...(cluster ? { cluster } : { category }),
         id: { not: excludeId },
       },
       orderBy: { publishedAt: "desc" },
@@ -185,6 +194,51 @@ export const getPostSlugs = cache(async () => {
     where: { status: "PUBLISHED", publishedAt: { not: null } },
     select: { slug: true, updatedAt: true },
   });
+});
+
+/** Every published post in a topic cluster, oldest first — reading order. */
+export const getClusterPosts = cache(async (cluster: string) => {
+  return prisma.post.findMany({
+    where: { status: "PUBLISHED", publishedAt: { not: null }, cluster },
+    orderBy: { publishedAt: "asc" },
+    select: postCardSelect,
+  });
+});
+
+/** Published posts by slug, in the order asked for. */
+export const getPostsBySlugs = cache(async (slugs: readonly string[]) => {
+  if (slugs.length === 0) return [];
+  const rows = await prisma.post.findMany({
+    where: { status: "PUBLISHED", publishedAt: { not: null }, slug: { in: [...slugs] } },
+    select: postCardSelect,
+  });
+  const bySlug = new Map(rows.map((post) => [post.slug, post]));
+  return slugs.flatMap((slug) => bySlug.get(slug) ?? []);
+});
+
+/** The articles that recommend a product — its links back into the journal. */
+export const getPostsForProduct = cache(async (productSlug: string, take = 3) => {
+  return prisma.post.findMany({
+    where: {
+      status: "PUBLISHED",
+      publishedAt: { not: null },
+      products: { has: productSlug },
+    },
+    orderBy: { publishedAt: "desc" },
+    take,
+    select: postCardSelect,
+  });
+});
+
+/** Published products by slug, in the order asked for. */
+export const getProductsBySlugs = cache(async (slugs: readonly string[]) => {
+  if (slugs.length === 0) return [];
+  const rows = await prisma.product.findMany({
+    where: { status: "PUBLISHED", slug: { in: [...slugs] } },
+    select: productCardSelect,
+  });
+  const bySlug = new Map(rows.map((product) => [product.slug, product]));
+  return slugs.flatMap((slug) => bySlug.get(slug) ?? []);
 });
 
 // ------------------------------------------------------------------- orders

@@ -129,7 +129,13 @@ function revalidatePost(slug?: string) {
   revalidatePath("/");
   revalidatePath("/journal");
   revalidatePath("/sitemap.xml");
+  revalidatePath("/llms.txt");
   if (slug) revalidatePath(`/journal/${slug}`);
+  // A post is listed in every guide box of its cluster and under each product
+  // it recommends, so any of those pages may now be stale. There are few
+  // enough of them that refreshing the lot is simpler than tracking which.
+  revalidatePath("/journal/[slug]", "page");
+  revalidatePath("/products/[slug]", "page");
 }
 
 /* -------------------------------------------------------------- products */
@@ -274,7 +280,47 @@ function readPostForm(data: FormData) {
     featured: bool(data, "featured"),
     seoTitle: str(data, "seoTitle"),
     seoDescription: str(data, "seoDescription"),
+    cluster: str(data, "cluster"),
+    products: str(data, "products")
+      .split(",")
+      .map((slug) => slugify(slug))
+      .filter(Boolean)
+      .slice(0, 8),
+    takeaways: str(data, "takeaways")
+      .split("\n")
+      .map((line) => line.replace(/^[-*•]\s*/, "").trim())
+      .filter(Boolean)
+      .slice(0, 8),
+    faqs: parseFaqs(str(data, "faqs")),
   };
+}
+
+/**
+ * "Q: …" / "A: …" pairs, one blank line apart. A line that starts neither is
+ * a continuation of whatever came before it, so long answers can wrap.
+ */
+function parseFaqs(text: string): { q: string; a: string }[] {
+  const faqs: { q: string; a: string }[] = [];
+  let current: { q: string; a: string } | null = null;
+  let field: "q" | "a" = "q";
+
+  for (const raw of text.split("\n")) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (/^q:/i.test(line)) {
+      if (current?.q && current.a) faqs.push(current);
+      current = { q: line.slice(2).trim(), a: "" };
+      field = "q";
+    } else if (/^a:/i.test(line) && current) {
+      current.a = line.slice(2).trim();
+      field = "a";
+    } else if (current) {
+      current[field] = `${current[field]} ${line}`.trim();
+    }
+  }
+  if (current?.q && current.a) faqs.push(current);
+
+  return faqs.slice(0, 12);
 }
 
 export async function savePost(

@@ -7,6 +7,7 @@ import { useFormStatus } from "react-dom";
 import { deletePost, savePost, type ActionState } from "@/app/dashboard/actions";
 import { ImageField } from "@/components/dashboard/image-field";
 import { Field, Panel, dashButton, inputClass } from "@/components/dashboard/ui";
+import { clusters } from "@/config/clusters";
 import { type ImageRef } from "@/lib/images";
 
 export type PostFormValues = {
@@ -25,7 +26,16 @@ export type PostFormValues = {
   featured: boolean;
   seoTitle: string | null;
   seoDescription: string | null;
+  cluster: string | null;
+  products: string[];
+  takeaways: string[];
+  faqs: { q: string; a: string }[];
 };
+
+/** The inverse of `parseFaqs` in the save action. */
+function formatFaqs(faqs: readonly { q: string; a: string }[]): string {
+  return faqs.map((faq) => `Q: ${faq.q}\nA: ${faq.a}`).join("\n\n");
+}
 
 function SaveButton({ isNew }: { isNew: boolean }) {
   const { pending } = useFormStatus();
@@ -95,6 +105,37 @@ export function PostForm({ post }: { post?: PostFormValues }) {
                 defaultValue={post?.body}
                 required
                 rows={26}
+                className={`${inputClass} resize-y font-mono text-[13px] leading-relaxed`}
+              />
+            </Field>
+          </div>
+        </Panel>
+
+        <Panel title="Short answer and questions">
+          <div className="grid gap-5 p-4 sm:p-6">
+            <Field
+              label="The short answer"
+              hint="One point per line, each one a complete sentence that makes sense on its own. Shown above the body — it is what search and AI answers quote."
+              error={error("takeaways")}
+            >
+              <textarea
+                name="takeaways"
+                defaultValue={post?.takeaways?.join("\n") ?? ""}
+                rows={5}
+                className={`${inputClass} resize-y`}
+              />
+            </Field>
+
+            <Field
+              label="Questions"
+              hint="Start a question with “Q:” and its answer with “A:”, one blank line between pairs. Shown at the end and marked up for search."
+              error={error("faqs")}
+            >
+              <textarea
+                name="faqs"
+                defaultValue={formatFaqs(post?.faqs ?? [])}
+                rows={10}
+                placeholder={"Q: How do I clean it?\nA: With a dry cloth.\n\nQ: …\nA: …"}
                 className={`${inputClass} resize-y font-mono text-[13px] leading-relaxed`}
               />
             </Field>
@@ -193,6 +234,38 @@ export function PostForm({ post }: { post?: PostFormValues }) {
               <input
                 name="imageSlot"
                 defaultValue={post?.imageSlot ?? "[ journal image ]"}
+                className={inputClass}
+              />
+            </Field>
+          </div>
+        </Panel>
+
+        <Panel title="Guide and links">
+          <div className="flex flex-col gap-5 p-4 sm:p-6">
+            <Field
+              label="Guide"
+              hint="The topic cluster this post belongs to. It links up to that guide and the guide lists it."
+              error={error("cluster")}
+            >
+              <select name="cluster" defaultValue={post?.cluster ?? ""} className={inputClass}>
+                <option value="">None</option>
+                {clusters.map((cluster) => (
+                  <option key={cluster.key} value={cluster.key}>
+                    {cluster.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+
+            <Field
+              label="Products"
+              hint="Slugs of the pieces this post recommends, comma separated. Shown under the post, and the post is linked from each product page."
+              error={error("products")}
+            >
+              <input
+                name="products"
+                defaultValue={post?.products?.join(", ") ?? ""}
+                placeholder="star-chandelier, courtyard-pendant"
                 className={inputClass}
               />
             </Field>

@@ -234,10 +234,25 @@ type ArticleLdInput = {
   publishedAt: Date | null;
   updatedAt: Date;
   image: ImageRef | null;
+  /** The topic cluster's name, e.g. "Moroccan brass lighting". */
+  section?: string | null;
+  /** The pillar guide this article belongs to, when it is not the pillar. */
+  partOf?: { title: string; slug: string } | null;
+  /** The articles a pillar guide gathers. */
+  hasPart?: readonly { title: string; slug: string }[];
+  /** Products the article recommends. */
+  mentions?: readonly { name: string; slug: string }[];
+  keywords?: readonly string[];
+  wordCount?: number;
 };
 
 export function articleLd(post: ArticleLdInput) {
   const url = absoluteUrl(`/journal/${post.slug}`);
+  const articleRef = (item: { title: string; slug: string }) => ({
+    "@type": "Article",
+    headline: item.title,
+    url: absoluteUrl(`/journal/${item.slug}`),
+  });
 
   return {
     "@context": "https://schema.org",
@@ -249,10 +264,24 @@ export function articleLd(post: ArticleLdInput) {
     url,
     mainEntityOfPage: url,
     inLanguage: site.language,
-    author: { "@type": "Person", name: post.author },
+    author: { "@type": "Person", name: post.author, worksFor: { "@id": ORG_ID } },
     publisher: { "@id": ORG_ID },
     datePublished: (post.publishedAt ?? post.updatedAt).toISOString(),
     dateModified: post.updatedAt.toISOString(),
+    ...(post.section ? { articleSection: post.section } : {}),
+    ...(post.keywords?.length ? { keywords: post.keywords.join(", ") } : {}),
+    ...(post.wordCount ? { wordCount: post.wordCount } : {}),
+    ...(post.partOf ? { isPartOf: articleRef(post.partOf) } : {}),
+    ...(post.hasPart?.length ? { hasPart: post.hasPart.map(articleRef) } : {}),
+    ...(post.mentions?.length
+      ? {
+          mentions: post.mentions.map((product) => ({
+            "@type": "Product",
+            name: product.name,
+            url: absoluteUrl(`/products/${product.slug}`),
+          })),
+        }
+      : {}),
   };
 }
 

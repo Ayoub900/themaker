@@ -7,9 +7,16 @@ import { AddToCart } from "@/components/shop/add-to-cart";
 import { ProductGallery } from "@/components/shop/product-gallery";
 import { ProductGrid } from "@/components/shop/product-card";
 import { Container, Eyebrow, SectionHeading } from "@/components/ui";
+import { clusterForCollection, getCluster } from "@/config/clusters";
 import { policies, shipping, site } from "@/config/site";
 import { formatCents } from "@/lib/money";
-import { getProductBySlug, getProductSlugs, getRelatedProducts } from "@/lib/queries";
+import {
+  getPostsBySlugs,
+  getPostsForProduct,
+  getProductBySlug,
+  getProductSlugs,
+  getRelatedProducts,
+} from "@/lib/queries";
 import { breadcrumbLd, metaDescription, pageMetadata, productLd } from "@/lib/seo";
 
 export const revalidate = 600;
@@ -57,7 +64,18 @@ export default async function ProductPage({
 
   if (!product) notFound();
 
-  const related = await getRelatedProducts(product.collection, product.id, 3);
+  // The journal links back to the money page: the articles that recommend
+  // this piece, or failing any, the guide that covers its collection.
+  const guideCluster = clusterForCollection(product.collection);
+  const [related, recommendedIn, guide] = await Promise.all([
+    getRelatedProducts(product.collection, product.id, 3),
+    getPostsForProduct(product.slug, 3),
+    guideCluster ? getPostsBySlugs([guideCluster.pillar]) : Promise.resolve([]),
+  ]);
+  const journal = [
+    ...recommendedIn,
+    ...guide.filter((pillar) => !recommendedIn.some((post) => post.id === pillar.id)),
+  ].slice(0, 3);
   const inStock = product.stock > 0;
 
   const details = [
@@ -200,6 +218,29 @@ export default async function ProductPage({
           </div>
         </Container>
       </section>
+
+      {journal.length > 0 ? (
+        <section className="border-t border-ink/10 bg-parchment/50 py-16 md:py-20">
+          <Container className="flex flex-col gap-9">
+            <SectionHeading title="From the journal" />
+            <ul className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+              {journal.map((post) => (
+                <li key={post.id}>
+                  <Link href={`/journal/${post.slug}`} className="group flex flex-col gap-3">
+                    <span className="text-[11px] uppercase tracking-[0.18em] text-faint">
+                      {getCluster(post.cluster)?.name ?? post.category} · {post.readMinutes} min
+                    </span>
+                    <h3 className="font-serif text-[1.5rem] leading-tight transition-colors group-hover:text-gold">
+                      {post.title}
+                    </h3>
+                    <p className="text-[15px] leading-relaxed text-muted">{post.excerpt}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </section>
+      ) : null}
 
       {related.length > 0 ? (
         <section className="border-t border-ink/10 py-16 md:py-20">

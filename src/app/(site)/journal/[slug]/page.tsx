@@ -1,11 +1,20 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ArticleFaqs, GuideBox, Takeaways } from "@/components/journal/guide";
 import { JsonLd } from "@/components/json-ld";
 import { Markdown } from "@/components/markdown";
+import { ProductGrid } from "@/components/shop/product-card";
 import { ButtonLink, Container, ImageSlot, SectionHeading } from "@/components/ui";
-import { getPostBySlug, getPostSlugs, getRelatedPosts } from "@/lib/queries";
-import { articleLd, breadcrumbLd, metaDescription, pageMetadata } from "@/lib/seo";
+import { getCluster } from "@/config/clusters";
+import {
+  getClusterPosts,
+  getPostBySlug,
+  getPostSlugs,
+  getProductsBySlugs,
+  getRelatedPosts,
+} from "@/lib/queries";
+import { articleLd, breadcrumbLd, faqLd, metaDescription, pageMetadata } from "@/lib/seo";
 import { formatDate } from "@/lib/utils";
 
 export const revalidate = 600;
@@ -33,6 +42,8 @@ export async function generateMetadata({
     });
   }
 
+  const cluster = getCluster(post.cluster);
+
   return pageMetadata({
     title: post.seoTitle || post.title,
     description: metaDescription(post.seoDescription || post.excerpt),
@@ -40,7 +51,7 @@ export async function generateMetadata({
     type: "article",
     publishedTime: post.publishedAt?.toISOString(),
     modifiedTime: post.updatedAt.toISOString(),
-    keywords: [...post.tags, post.category],
+    keywords: [...post.tags, post.category, ...(cluster ? [cluster.name] : [])],
     image: post.image,
   });
 }
@@ -55,7 +66,26 @@ export default async function JournalPostPage({
 
   if (!post) notFound();
 
-  const related = await getRelatedPosts(post.category, post.id, 2);
+  const cluster = getCluster(post.cluster);
+
+  const [clusterPosts, products, related] = await Promise.all([
+    cluster ? getClusterPosts(cluster.key) : Promise.resolve([]),
+    getProductsBySlugs(post.products),
+    getRelatedPosts({ cluster: post.cluster, category: post.category }, post.id, 2),
+  ]);
+
+  const pillar = cluster
+    ? (clusterPosts.find((item) => item.slug === cluster.pillar) ?? null)
+    : null;
+  const isPillar = pillar?.slug === post.slug;
+  const articles = clusterPosts.filter((item) => item.slug !== cluster?.pillar);
+
+  const trail = [
+    { name: "Home", path: "/" },
+    { name: "Journal", path: "/journal" },
+    ...(pillar && !isPillar ? [{ name: pillar.title, path: `/journal/${pillar.slug}` }] : []),
+    { name: post.title, path: `/journal/${post.slug}` },
+  ];
 
   return (
     <>
@@ -69,12 +99,15 @@ export default async function JournalPostPage({
             publishedAt: post.publishedAt,
             updatedAt: post.updatedAt,
             image: post.image,
+            section: cluster?.name ?? post.category,
+            partOf: pillar && !isPillar ? pillar : null,
+            hasPart: isPillar ? articles : [],
+            mentions: products,
+            keywords: post.tags,
+            wordCount: post.body.split(/\s+/).filter(Boolean).length,
           }),
-          breadcrumbLd([
-            { name: "Home", path: "/" },
-            { name: "Journal", path: "/journal" },
-            { name: post.title, path: `/journal/${post.slug}` },
-          ]),
+          breadcrumbLd(trail),
+          ...(post.faqs.length > 0 ? [faqLd(post.faqs)] : []),
         ]}
       />
 
@@ -89,7 +122,16 @@ export default async function JournalPostPage({
                 Journal
               </Link>
               <span className="mx-2.5">/</span>
-              <span className="text-muted">{post.category}</span>
+              {pillar && !isPillar ? (
+                <Link
+                  href={`/journal/${pillar.slug}`}
+                  className="transition-colors hover:text-gold"
+                >
+                  {cluster?.name}
+                </Link>
+              ) : (
+                <span className="text-muted">{cluster?.name ?? post.category}</span>
+              )}
             </nav>
 
             <h1 className="text-[clamp(2.25rem,5vw,3.5rem)] leading-[1.08]">
@@ -104,6 +146,17 @@ export default async function JournalPostPage({
               <time dateTime={post.publishedAt?.toISOString()}>
                 {formatDate(post.publishedAt)}
               </time>
+              {post.updatedAt.getTime() - (post.publishedAt?.getTime() ?? 0) > 86_400_000 ? (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <span>
+                    Updated{" "}
+                    <time dateTime={post.updatedAt.toISOString()}>
+                      {formatDate(post.updatedAt)}
+                    </time>
+                  </span>
+                </>
+              ) : null}
               <span aria-hidden="true">·</span>
               <span>{post.readMinutes} min read</span>
             </div>
@@ -120,23 +173,59 @@ export default async function JournalPostPage({
           />
         </Container>
 
-        <Container className="max-w-[760px] py-12 md:py-16">
-          <Markdown content={post.body} />
+        <Container className="flex max-w-[760px] flex-col gap-10 py-12 md:py-16">
+          <Takeaways items={post.takeaways} />
 
-          {post.tags.length > 0 ? (
-            <ul className="mt-14 flex flex-wrap gap-2.5 border-t border-ink/12 pt-8">
-              {post.tags.map((tag) => (
-                <li
-                  key={tag}
-                  className="bg-parchment px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] text-faint"
-                >
-                  {tag}
-                </li>
-              ))}
-            </ul>
+          {cluster && isPillar ? (
+            <GuideBox
+              cluster={cluster}
+              pillar={pillar}
+              articles={articles}
+              currentSlug={post.slug}
+            />
           ) : null}
+
+          <div>
+            <Markdown content={post.body} />
+
+            <ArticleFaqs faqs={post.faqs} />
+
+            {cluster && !isPillar ? (
+              <GuideBox
+                cluster={cluster}
+                pillar={pillar}
+                articles={articles}
+                currentSlug={post.slug}
+                className="mt-14"
+              />
+            ) : null}
+
+            {post.tags.length > 0 ? (
+              <ul className="mt-14 flex flex-wrap gap-2.5 border-t border-ink/12 pt-8">
+                {post.tags.map((tag) => (
+                  <li
+                    key={tag}
+                    className="bg-parchment px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] text-faint"
+                  >
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
         </Container>
       </article>
+
+      {products.length > 0 ? (
+        <section className="border-t border-ink/10 py-16 md:py-20">
+          <Container className="flex flex-col gap-9">
+            <SectionHeading
+              title={products.length === 1 ? "The piece in this article" : "Pieces in this article"}
+            />
+            <ProductGrid products={products} />
+          </Container>
+        </section>
+      ) : null}
 
       <section className="bg-parchment py-14 md:py-16">
         <Container className="flex max-w-[760px] flex-col items-start gap-4">
@@ -168,7 +257,7 @@ export default async function JournalPostPage({
                       sizes="(min-width: 640px) 45vw, 90vw"
                     />
                     <span className="text-[11px] uppercase tracking-[0.18em] text-faint">
-                      {item.category} · {item.readMinutes} min
+                      {getCluster(item.cluster)?.name ?? item.category} · {item.readMinutes} min
                     </span>
                     <h3 className="font-serif text-[1.6rem] leading-tight transition-colors group-hover:text-gold">
                       {item.title}

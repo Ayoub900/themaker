@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { JsonLd } from "@/components/json-ld";
 import { Container, EmptyState, Eyebrow, ImageSlot } from "@/components/ui";
+import { clusters } from "@/config/clusters";
 import { site } from "@/config/site";
 import { getPosts } from "@/lib/queries";
 import { breadcrumbLd, itemListLd, pageMetadata } from "@/lib/seo";
@@ -12,13 +13,24 @@ export const revalidate = 600;
 export const metadata = pageMetadata({
   title: "Journal",
   description:
-    `Notes from a two-person metal workshop in ${site.city}: why we stopped plating anything, how a bowl is raised, what a commission actually costs, and how to live with a patina.`,
+    `Guides from a metal workshop in ${site.city}: Moroccan brass lamps and chandeliers, caring for brass, the craft of dinanderie, and buying handmade metalwork from Morocco.`,
   path: "/journal",
 });
 
 export default async function JournalPage() {
   const posts = await getPosts();
   const [lead, ...rest] = posts;
+
+  // One entry per topic cluster, pointing at its pillar guide — the top of
+  // each cocoon, and the page every article in it links back up to.
+  const guides = clusters.flatMap((cluster) => {
+    const pillar = posts.find((post) => post.slug === cluster.pillar);
+    if (!pillar) return [];
+    const count = posts.filter(
+      (post) => post.cluster === cluster.key && post.slug !== cluster.pillar,
+    ).length;
+    return [{ cluster, pillar, count }];
+  });
 
   return (
     <>
@@ -47,6 +59,36 @@ export default async function JournalPage() {
           </p>
         </Container>
       </section>
+
+      {guides.length > 0 ? (
+        <section aria-labelledby="guides" className="border-b border-ink/10 py-14 md:py-16">
+          <Container className="flex flex-col gap-8">
+            <h2 id="guides" className="text-[11px] uppercase tracking-[0.18em] text-gold">
+              The guides
+            </h2>
+            <ul className="grid gap-px bg-ink/10 sm:grid-cols-2 lg:grid-cols-4">
+              {guides.map(({ cluster, pillar, count }) => (
+                <li key={cluster.key} className="bg-paper">
+                  <Link
+                    href={`/journal/${pillar.slug}`}
+                    className="group flex h-full flex-col gap-3 p-6"
+                  >
+                    <span className="font-serif text-[1.5rem] leading-tight transition-colors group-hover:text-gold">
+                      {cluster.name}
+                    </span>
+                    <span className="text-[14px] leading-relaxed text-muted">
+                      {cluster.description}
+                    </span>
+                    <span className="mt-auto pt-2 text-[11px] uppercase tracking-[0.18em] text-faint">
+                      Guide + {count} {count === 1 ? "article" : "articles"}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </section>
+      ) : null}
 
       {posts.length === 0 ? (
         <Container className="py-16">

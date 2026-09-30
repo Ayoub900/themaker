@@ -112,7 +112,9 @@ lives in MongoDB and is managed from the dashboard.
 
 Uploads are stored as **plain files in an upload folder** — `./uploads` by
 default, or wherever `UPLOAD_DIR` points. Each file is named by a random id
-plus its extension (`3f9c…e1.jpg`) and the folder is git-ignored. It needs a
+plus its extension (`3f9c…e1.jpg`). The folder is committed with the repo, so
+the seeded catalogue and journal arrive with their photographs (see
+`prisma/data/images.ts`); uploads made on a live server are not. It needs a
 host with a persistent disk: back the folder up with the database, and on a
 container host mount a volume at it. A serverless host (Vercel and the like)
 will not work — its filesystem is read-only and per-instance.
