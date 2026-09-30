@@ -78,26 +78,12 @@ model LoginAttempt {
 
 // ------------------------------------------------------------------ images
 
-// An uploaded photograph. The bytes live in Mongo rather than in an object
-// store, so the app keeps its single piece of infrastructure — the 16 MB
-// document ceiling is ample for the 5 MB an upload is allowed to be. The
-// bytes are read by `/api/images/[id]` and by nothing else.
-model Image {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  data      Bytes
-  mimeType  String
-  width     Int
-  height    Int
-  bytes     Int
-  createdAt DateTime @default(now())
-
-  @@map("images")
-}
-
-// What a page needs to lay a photograph out, kept on the piece that uses it so
-// that a listing of twenty-four products reads no image documents at all.
+// Uploaded photographs are plain files in the upload folder (`UPLOAD_DIR`,
+// default `./uploads`), served by `/uploads/[file]`. The database only holds
+// what a page needs to lay one out, kept on the piece that uses it so that a
+// listing of twenty-four products never touches the disk.
 type ImageRef {
-  id     String @db.ObjectId
+  id     String // the file name, e.g. "3f9c…e1.jpg"
   width  Int
   height Int
   alt    String

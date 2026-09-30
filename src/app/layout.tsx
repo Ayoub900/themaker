@@ -1,26 +1,31 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Jost } from "next/font/google";
+import localFont from "next/font/local";
 
 import { SITE_URL, brand, seo, site } from "@/config/site";
 
 import "./globals.css";
 
 /**
- * Self-hosted at build time by next/font, so there is no render-blocking
- * request to Google and no layout shift from a late swap.
+ * Self-hosted from `./fonts` (the Google Fonts latin variable files), so there
+ * is no render-blocking request to Google, no layout shift from a late swap,
+ * and no dependency on Google's CSS at build time — Turbopack's
+ * `next/font/google` loader fails outright when Google answers with its
+ * `/l/font?kit=…` URLs.
  */
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  style: ["normal", "italic"],
+const cormorant = localFont({
+  src: [
+    { path: "./fonts/cormorant-garamond.woff2", weight: "300 600", style: "normal" },
+    { path: "./fonts/cormorant-garamond-italic.woff2", weight: "300 600", style: "italic" },
+  ],
   variable: "--font-cormorant",
   display: "swap",
   preload: true,
 });
 
-const jost = Jost({
-  subsets: ["latin"],
-  weight: ["300", "400", "500"],
+const jost = localFont({
+  src: "./fonts/jost.woff2",
+  weight: "300 500",
+  style: "normal",
   variable: "--font-jost",
   display: "swap",
   preload: true,

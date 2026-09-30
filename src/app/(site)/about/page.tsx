@@ -46,7 +46,12 @@ export default function AboutPage() {
           </div>
 
           <div className="flex flex-col gap-8">
-            <ImageSlot label={about.imageSlot} ratio="4 / 5" />
+            <ImageSlot
+              label={about.imageSlot}
+              photo={about.photo}
+              ratio="4 / 5"
+              sizes="(min-width: 768px) 45vw, 100vw"
+            />
             <dl className="grid grid-cols-3 gap-x-4 gap-y-6 border-t border-ink/12 pt-7 sm:gap-6">
               {stats.map((stat) => (
                 <div key={stat.label} className="flex flex-col gap-1.5">
@@ -70,7 +75,13 @@ export default function AboutPage() {
           <ul className="grid gap-10 md:grid-cols-2">
             {makers.map((maker) => (
               <li key={maker.name} className="flex flex-col gap-4">
-                <ImageSlot label={`[ portrait — ${maker.name} ]`} ratio="1 / 1" inverse />
+                <ImageSlot
+                  label={`[ portrait — ${maker.name} ]`}
+                  photo={maker.photo}
+                  ratio="1 / 1"
+                  sizes="(min-width: 768px) 45vw, 100vw"
+                  inverse
+                />
                 <div className="flex flex-col gap-1.5">
                   <h3 className="font-serif text-2xl">{maker.name}</h3>
                   <span className="text-[11px] uppercase tracking-[0.18em] text-gold">

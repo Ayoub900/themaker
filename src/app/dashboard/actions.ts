@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { requireSession } from "@/lib/auth";
+import { inspectImage } from "@/lib/image-file";
 import {
   MAX_IMAGE_ALT,
   MAX_PRODUCT_IMAGES,
@@ -13,6 +14,7 @@ import {
 import { hashPassword, verifyPassword } from "@/lib/password";
 import { parsePriceToCents } from "@/lib/money";
 import { prisma } from "@/lib/prisma";
+import { deleteUploads, readUpload } from "@/lib/uploads";
 import { readingMinutes, slugify } from "@/lib/utils";
 import {
   fieldErrors,
@@ -48,7 +50,7 @@ const int = (data: FormData, key: string, fallback = 0) => {
  * themselves went up the moment they were chosen, so the form carries only
  * their ids — see `/api/dashboard/images`.
  *
- * The pixel size is read back from the database rather than taken from the
+ * The pixel size is read back from the file itself rather than taken from the
  * form. It is what every page reserves its space with, and an action is a
  * public POST endpoint whose fields can say anything.
  */
@@ -67,20 +69,21 @@ async function readImages(
 
   if (chosen.length === 0) return [];
 
-  const stored = await prisma.image.findMany({
-    where: { id: { in: chosen.map((entry) => entry.id) } },
-    select: { id: true, width: true, height: true },
-  });
-  const byId = new Map(stored.map((image) => [image.id, image]));
+  const stored = await Promise.all(
+    chosen.map(async (entry) => {
+      const bytes = await readUpload(entry.id);
+      return bytes ? inspectImage(bytes) : null;
+    }),
+  );
 
-  // An id with no document behind it is dropped rather than saved as a
+  // An id with no file behind it is dropped rather than saved as a
   // reference to nothing — the upload can only have been deleted since.
-  return chosen.flatMap((entry) => {
-    const image = byId.get(entry.id);
+  return chosen.flatMap((entry, index) => {
+    const image = stored[index];
     if (!image) return [];
     return [
       {
-        id: image.id,
+        id: entry.id,
         width: image.width,
         height: image.height,
         alt: (entry.alt || fallbackAlt).slice(0, MAX_IMAGE_ALT),
@@ -102,7 +105,7 @@ async function discardImages(
   const dropped = previous.filter((image) => !kept.has(image.id)).map((image) => image.id);
 
   if (dropped.length > 0) {
-    await prisma.image.deleteMany({ where: { id: { in: dropped } } });
+    await deleteUploads(dropped);
   }
 }
 

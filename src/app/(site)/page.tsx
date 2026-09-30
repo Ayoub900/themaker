@@ -55,7 +55,14 @@ export default async function HomePage() {
             </ButtonLink>
           </div>
 
-          <ImageSlot label={hero.imageSlot} ratio="21 / 9" sizes="100vw" className="mt-5 w-full" />
+          <ImageSlot
+            label={hero.imageSlot}
+            photo={hero.photo}
+            ratio="21 / 9"
+            sizes="100vw"
+            priority
+            className="mt-5 w-full"
+          />
         </Container>
       </section>
 
@@ -123,7 +130,13 @@ export default async function HomePage() {
             </ButtonLink>
           </div>
 
-          <ImageSlot label={about.imageSlot} ratio="4 / 3" inverse />
+          <ImageSlot
+            label={about.imageSlot}
+            photo={about.photo}
+            ratio="4 / 3"
+            sizes="(min-width: 768px) 50vw, 100vw"
+            inverse
+          />
         </Container>
       </section>
 

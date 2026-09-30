@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { requireSession } from "@/lib/auth";
 import { isImageId } from "@/lib/images";
 import { prisma } from "@/lib/prisma";
+import { deleteUploads } from "@/lib/uploads";
 
 export const runtime = "nodejs";
 
@@ -10,7 +11,7 @@ export const runtime = "nodejs";
  * Discards an upload the editor removed again before saving.
  *
  * Without this, changing your mind twice about a photograph would leave both
- * rejected files in the database for good. A photograph that some piece is
+ * rejected files in the upload folder for good. A photograph that some piece is
  * already using is never deleted here — that only happens through saving or
  * deleting the piece itself, which is what knows the change is intended.
  */
@@ -39,6 +40,6 @@ export async function DELETE(
     );
   }
 
-  await prisma.image.deleteMany({ where: { id } });
+  await deleteUploads([id]);
   return new NextResponse(null, { status: 204 });
 }

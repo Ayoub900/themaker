@@ -24,6 +24,10 @@ export const hero = {
   primaryCta: { label: "Browse products", href: "/products" },
   secondaryCta: { label: "Our story", href: "/about" },
   imageSlot: "[ hero — bench shot, tools and brass ]",
+  photo: {
+    src: "/images/hero.jpg",
+    alt: "Pierced brass lanterns hanging in a dimly lit market",
+  },
 } as const;
 
 /** The four promises repeated across the site. */
@@ -63,6 +67,10 @@ export const about = {
     "We make twenty-four things. It is not a large range and it does not grow quickly, because a piece only joins it once we have made it enough times to know what it should cost and how long it should take. Nothing leaves the courtyard that we would not keep ourselves.",
   ],
   imageSlot: "[ portrait — the two makers ]",
+  photo: {
+    src: "/images/story.jpg",
+    alt: "An artisan engraving a decorative metal tray at the bench",
+  },
 } as const;
 
 export const makers = [
@@ -70,11 +78,19 @@ export const makers = [
     name: "Salma Bennani",
     role: "Forge, raising, chasing",
     note: `Trained in the dinanderie workshops of Fès. Raises every bowl and tray in the range.`,
+    photo: {
+      src: "/images/maker-1.jpg",
+      alt: "Hands chasing a pattern into sheet metal",
+    },
   },
   {
     name: "Youssef Amrani",
     role: "Casting, fitting, finishing",
     note: "Came from architectural restoration. Cuts the patterns and does the final surface on everything.",
+    photo: {
+      src: "/images/maker-2.jpg",
+      alt: "Hands working a detailed metal piece at the bench",
+    },
   },
 ] as const;
 

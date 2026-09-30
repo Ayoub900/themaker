@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 
-import { imageUrl, type ImageRef } from "@/lib/images";
+import { imageUrl, type ImageRef, type SitePhoto } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
 /* --------------------------------------------------------------- buttons */
@@ -117,6 +117,7 @@ export function SectionHeading({
 export function ImageSlot({
   label,
   image,
+  photo,
   ratio = "4 / 5",
   sizes = "100vw",
   priority = false,
@@ -127,6 +128,8 @@ export function ImageSlot({
   label: string;
   /** The photograph, once the workshop has uploaded it. */
   image?: ImageRef | null;
+  /** A photograph kept in the repo under `public/`, for fixed site sections. */
+  photo?: SitePhoto | null;
   ratio?: string;
   /** The width the image will occupy, so the browser fetches the right size. */
   sizes?: string;
@@ -135,15 +138,17 @@ export function ImageSlot({
   className?: string;
   inverse?: boolean;
 }) {
-  if (image) {
+  const shown = image ? { src: imageUrl(image.id), alt: image.alt } : photo;
+
+  if (shown) {
     return (
       <div
         className={cn("relative overflow-hidden bg-parchment", className)}
         style={{ aspectRatio: ratio }}
       >
         <Image
-          src={imageUrl(image.id)}
-          alt={image.alt}
+          src={shown.src}
+          alt={shown.alt}
           fill
           sizes={sizes}
           priority={priority}

@@ -8,7 +8,7 @@ import {
   formatBytes,
   imageUrl,
 } from "@/lib/images";
-import { prisma } from "@/lib/prisma";
+import { saveUpload } from "@/lib/uploads";
 
 export const runtime = "nodejs";
 
@@ -86,18 +86,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let image: { id: string };
+  let id: string;
   try {
-    image = await prisma.image.create({
-      data: {
-        data: bytes,
-        mimeType: inspected.mimeType,
-        width: inspected.width,
-        height: inspected.height,
-        bytes: bytes.byteLength,
-      },
-      select: { id: true },
-    });
+    id = await saveUpload(bytes, inspected.mimeType);
   } catch (error) {
     // Named in the log, because all the browser gets is a failed upload.
     console.error("image upload failed", error);
@@ -109,8 +100,8 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json(
     {
-      id: image.id,
-      url: imageUrl(image.id),
+      id,
+      url: imageUrl(id),
       width: inspected.width,
       height: inspected.height,
       bytes: bytes.byteLength,

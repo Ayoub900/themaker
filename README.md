@@ -61,6 +61,7 @@ cp .env.example .env
 | `DATABASE_URL` | MongoDB connection string (replica set required) |
 | `NEXT_PUBLIC_SITE_URL` | Absolute origin, no trailing slash. Drives canonicals, sitemap and Open Graph |
 | `AUTH_SECRET` | Signs the dashboard session cookie. At least 32 characters |
+| `UPLOAD_DIR` | Optional. Folder uploaded photographs are saved in. Defaults to `./uploads` |
 | `SEED_ADMIN_EMAIL` / `SEED_ADMIN_NAME` / `SEED_ADMIN_PASSWORD` | The admin account the seed creates. Minimum 12 characters |
 
 Generate a secret with:
@@ -109,11 +110,12 @@ lives in MongoDB and is managed from the dashboard.
 
 ## Photographs
 
-Uploads are stored **in MongoDB**, not on disk or in an object store. A 5 MB
-ceiling sits well under Mongo's 16 MB per document, and it keeps deployment to
-one variable: no bucket, no credentials, no second thing to back up. On a
-serverless host it is also the only option that survives — the filesystem there
-is read-only and per-instance.
+Uploads are stored as **plain files in an upload folder** — `./uploads` by
+default, or wherever `UPLOAD_DIR` points. Each file is named by a random id
+plus its extension (`3f9c…e1.jpg`) and the folder is git-ignored. It needs a
+host with a persistent disk: back the folder up with the database, and on a
+container host mount a volume at it. A serverless host (Vercel and the like)
+will not work — its filesystem is read-only and per-instance.
 
 - The dashboard uploads a file the moment it is chosen, to
   `POST /api/dashboard/images`, and the form then carries only its id. A
@@ -124,15 +126,17 @@ is read-only and per-instance.
   is set from the file extension and can say anything. JPEG, PNG, WebP and GIF
   are accepted; an SVG renamed to `.png` is refused, which is what keeps the
   one scriptable image format out.
-- `GET /api/images/[id]` serves the bytes. An id never points at different
-  bytes — editing uploads a new document and repoints the piece — so the
+- `GET /uploads/[file]` serves the file. It lives outside `public/` because
+  `next start` only serves public files that existed when it booted. A file
+  name never points at different bytes — editing uploads a new file and
+  repoints the piece — so the
   response carries `immutable` for a year and answers conditional requests
   with a 304.
 - Because that is a local path, `next/image` resizes and re-encodes it like
   any other asset: a 1500px PNG comes back as a 640px AVIF a third of the size.
 - What a page needs to lay a photograph out — id, size, description — is kept
-  on the product or post itself, so a listing of twenty-four products reads no
-  image documents at all.
+  on the product or post itself, so a listing of twenty-four products never
+  touches the disk.
 - Descriptions default to the product name or post title when left blank, so
   nothing is ever published with an empty `alt`.
 - A photograph is deleted with the piece that used it, and when it is replaced
