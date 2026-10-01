@@ -130,4 +130,30 @@ export const products: SeedProduct[] = [
       { label: "Size", value: "120 cm high" },
     ],
   },
+  {
+    slug: "khobza-dome-pendant-light",
+    name: "Khobza dome pendant light",
+    reference: "04 / 24",
+    material: "Solid brass, hand-pierced",
+    collection: "Light",
+    summary:
+      "A 60 cm hand-pierced brass dome pendant, the low round Khobza shape, worked with rosettes and floral piercing.",
+    description:
+      "A wide, shallow dome in the round Khobza shape, handcrafted from solid brass. Traditional geometric rosettes sit within a field of floral piercing, every perforation chiselled by hand.\n\n" +
+      "Lit, the openwork casts warm, intricate shadows across the walls and ceiling, a cosy and enchanting light. The brass keeps a warm metallic sheen and develops a patina over time.\n\n" +
+      "At 60 cm across it is a centrepiece for a living room, dining area, entryway or high-ceilinged space, equally at home in a bohemian or a traditional interior.",
+    priceCents: 250_000,
+    stock: 1,
+    leadTime: MADE,
+    dimensions: "Ø 600 mm",
+    care: "Dust with a soft dry cloth. Mild brass polish if you want it bright again.",
+    imageSlot: "[ product — brass dome pendant ]",
+    featured: true,
+    specs: [
+      { label: "Metal", value: "Solid brass" },
+      { label: "Work", value: "Hand-chiselled geometric and floral piercing" },
+      { label: "Form", value: "Low round dome" },
+      { label: "Size", value: "60 cm diameter" },
+    ],
+  },
 ];

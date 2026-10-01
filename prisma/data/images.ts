@@ -43,4 +43,7 @@ export const productImages: Record<string, SeedImage[]> = {
   "damaa-floor-lamp": [
     { id: "977e9274434b1b84c40319ad.jpg", alt: "Tall hand-pierced brass teardrop floor lamp, lit, in the workshop" },
   ],
+  "khobza-dome-pendant-light": [
+    { id: "6963b29bcc8b85e8bceb98d9.jpg", alt: "Round hand-pierced brass dome pendant, lit, among other lamps in the showroom" },
+  ],
 };
