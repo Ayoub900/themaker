@@ -34,4 +34,10 @@ export const productImages: Record<string, SeedImage[]> = {
   "star-chandelier": [
     { id: "6abd4bcca1eabc363cb7c30d.jpg", alt: "Hand-pierced brass star chandelier, lit, hanging in the workshop" },
   ],
+  "moroccan-brass-pendant-light": [
+    { id: "0419656e59e4e4313cb35a6c.jpg", alt: "Hand-pierced Moroccan brass pendant light hanging from a ceiling rose" },
+  ],
+  "flamla-pendant-light": [
+    { id: "66dd0ca005180cd59024cbd3.jpg", alt: "Tall teardrop-shaped hand-pierced brass Flamla pendant, lit, in the showroom" },
+  ],
 };

@@ -52,4 +52,56 @@ export const products: SeedProduct[] = [
       { label: "Size", value: "100 cm high, 80 cm wide" },
     ],
   },
+  {
+    slug: "moroccan-brass-pendant-light",
+    name: "Moroccan brass pendant light",
+    reference: "01 / 24",
+    material: "Solid brass, hand-pierced",
+    collection: "Light",
+    summary:
+      "A 70 cm hand-pierced brass pendant: a ring of pierced tubes over an onion-shaped lower body and finial.",
+    description:
+      "An architectural pendant in the Moorish tradition. Handcrafted from solid brass, it rises in multi-tubular sections around a central lantern and narrows into an ornate, onion-shaped lower body that ends in a turned finial.\n\n" +
+      "Every surface is covered in traditional openwork, pierced by hand, so no two pieces are exactly alike. Lit, it gives a soft, warm glow and throws intricate shadows across the walls and ceiling.\n\n" +
+      "At 70 cm long it is a statement piece for a living room, dining area, hallway or entryway, and it sits as comfortably in a bohemian or eclectic interior as in a traditional or modern one.",
+    priceCents: 350_000,
+    stock: 1,
+    leadTime: MADE,
+    dimensions: "700 mm long",
+    care: "Dust with a soft dry cloth. Mild brass polish if you want it bright again.",
+    imageSlot: "[ product — brass pendant light ]",
+    featured: true,
+    specs: [
+      { label: "Metal", value: "Solid brass" },
+      { label: "Work", value: "Hand-pierced openwork" },
+      { label: "Form", value: "Multi-tubular body, onion-shaped finial" },
+      { label: "Size", value: "70 cm long" },
+    ],
+  },
+  {
+    slug: "flamla-pendant-light",
+    name: "Flamla pendant light",
+    reference: "02 / 24",
+    material: "Solid brass, hand-pierced",
+    collection: "Light",
+    summary:
+      "A grand 1.20 m hand-pierced brass pendant: a teardrop-shaped Flamla over cascading pierced tiers.",
+    description:
+      "A breathtaking statement piece, handcrafted from solid brass. A tall teardrop-shaped Flamla crowns a run of cascading tiers, each one hand-pierced with geometric and floral motifs.\n\n" +
+      "Lit, the openwork diffuses a warm, ambient glow and throws intricate shadow patterns across the surrounding walls and ceiling. Every piercing is made by hand, so no two pieces are exactly alike.\n\n" +
+      "At 1.20 m high it is made for large spaces and high ceilings: spacious living rooms, grand hallways and entryways, villas, restaurants and boutique hotels.",
+    priceCents: 500_000,
+    stock: 1,
+    leadTime: MADE,
+    dimensions: "1200 mm high",
+    care: "Dust with a soft dry cloth. Mild brass polish if you want it bright again.",
+    imageSlot: "[ product — brass flamla pendant ]",
+    featured: true,
+    specs: [
+      { label: "Metal", value: "Solid brass" },
+      { label: "Work", value: "Hand-pierced geometric and floral motifs" },
+      { label: "Form", value: "Teardrop Flamla over cascading tiers" },
+      { label: "Size", value: "120 cm high" },
+    ],
+  },
 ];
