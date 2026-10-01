@@ -46,4 +46,7 @@ export const productImages: Record<string, SeedImage[]> = {
   "khobza-dome-pendant-light": [
     { id: "6963b29bcc8b85e8bceb98d9.jpg", alt: "Round hand-pierced brass dome pendant, lit, among other lamps in the showroom" },
   ],
+  "hammered-copper-verdigris-pendant": [
+    { id: "69f37a6ebdff77666f68dd99.jpg", alt: "Hammered copper bell pendant with a blue-green verdigris band, lit, hanging by a window" },
+  ],
 };

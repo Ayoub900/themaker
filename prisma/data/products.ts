@@ -156,4 +156,30 @@ export const products: SeedProduct[] = [
       { label: "Size", value: "60 cm diameter" },
     ],
   },
+  {
+    slug: "hammered-copper-verdigris-pendant",
+    name: "Hammered copper verdigris pendant",
+    reference: "05 / 24",
+    material: "Hammered copper, verdigris patina",
+    collection: "Light",
+    summary:
+      "A hand-hammered copper bell pendant, its lower edge finished in a blue-green verdigris patina.",
+    description:
+      "A bell-shaped pendant raised from copper and hand-hammered all over, so the surface catches and breaks up the light. The lower part of the shade is finished in a deep blue-green verdigris patina, a striking two-tone against the warm bare copper above.\n\n" +
+      "Lit, the hammered interior reflects a warm glow down onto the table or floor below. It hangs from a black cord with a brass fitting.\n\n" +
+      "Every shade is hammered and patinated by hand, so the texture and the line of the verdigris differ from one piece to the next. It suits a kitchen island, a dining table or a reading corner.",
+    priceCents: 130_000,
+    stock: 1,
+    leadTime: MADE,
+    dimensions: "Size on request",
+    care: "Dust with a soft dry cloth. Do not polish the verdigris band — it is the finish.",
+    imageSlot: "[ product — copper verdigris pendant ]",
+    featured: true,
+    specs: [
+      { label: "Metal", value: "Copper" },
+      { label: "Work", value: "Hand-hammered" },
+      { label: "Finish", value: "Bare copper with verdigris patina" },
+      { label: "Form", value: "Bell shade, black cord, brass fitting" },
+    ],
+  },
 ];
