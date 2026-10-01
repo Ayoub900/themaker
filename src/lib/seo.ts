@@ -186,7 +186,7 @@ type ProductLdInput = {
   material: string;
   priceCents: number;
   currency: string;
-  stock: number;
+  stock: number | null;
   reference: string;
   images: ImageRef[];
 };
@@ -215,7 +215,7 @@ export function productLd(product: ProductLdInput) {
       priceCurrency: product.currency,
       price: (product.priceCents / 100).toFixed(2),
       availability:
-        product.stock > 0
+        (product.stock ?? 0) > 0
           ? "https://schema.org/InStock"
           : "https://schema.org/BackOrder",
       itemCondition: "https://schema.org/NewCondition",

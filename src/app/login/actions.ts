@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { createSessionCookie, destroySessionCookie } from "@/lib/auth";
 import { DUMMY_HASH, verifyPassword } from "@/lib/password";
 import { prisma } from "@/lib/prisma";
-import { checkThrottle, clearThrottle, registerFailure } from "@/lib/rate-limit";
+import { checkThrottle, clearThrottle, registerFailure, requestIp } from "@/lib/rate-limit";
 import { loginSchema } from "@/lib/validation";
 
 export type LoginState = { error?: string };
@@ -16,8 +16,7 @@ const GENERIC_FAILURE = "That email and password do not match.";
 
 async function clientIp(): Promise<string> {
   const headerList = await headers();
-  const forwarded = headerList.get("x-forwarded-for");
-  return forwarded?.split(",")[0]?.trim() || headerList.get("x-real-ip") || "unknown";
+  return requestIp(headerList);
 }
 
 /** Only allow redirects back into our own dashboard. */

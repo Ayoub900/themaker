@@ -19,7 +19,7 @@ export default async function EditProductPage({
     <>
       <PageHeading
         title={product.name}
-        subtitle={`${product.reference} · last saved ${formatDateTime(product.updatedAt)}`}
+        subtitle={`Last saved ${formatDateTime(product.updatedAt)}`}
         action={<StatusPill status={product.status} />}
       />
       <ProductForm product={product} />

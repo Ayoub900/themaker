@@ -5,8 +5,8 @@ export default function NewProductPage() {
   return (
     <>
       <PageHeading
-        title="New product"
-        subtitle="Draft it, look at it on the site, then publish."
+        title="Add a product"
+        subtitle="Fill in the form and press save. The product stays hidden until you choose “Shown on the website”."
       />
       <ProductForm />
     </>

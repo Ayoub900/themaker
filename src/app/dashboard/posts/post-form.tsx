@@ -6,7 +6,8 @@ import { useFormStatus } from "react-dom";
 
 import { deletePost, savePost, type ActionState } from "@/app/dashboard/actions";
 import { ImageField } from "@/components/dashboard/image-field";
-import { Field, Panel, dashButton, inputClass } from "@/components/dashboard/ui";
+import { ConfirmButton } from "@/components/dashboard/confirm-button";
+import { Field, FormMessage, Panel, dashButton, inputClass } from "@/components/dashboard/ui";
 import { clusters } from "@/config/clusters";
 import { type ImageRef } from "@/lib/images";
 
@@ -41,7 +42,7 @@ function SaveButton({ isNew }: { isNew: boolean }) {
   const { pending } = useFormStatus();
   return (
     <button type="submit" disabled={pending} className={dashButton.solid}>
-      {pending ? "Saving…" : isNew ? "Create post" : "Save changes"}
+      {pending ? "Saving…" : isNew ? "Save the new article" : "Save changes"}
     </button>
   );
 }
@@ -56,15 +57,15 @@ export function PostForm({ post }: { post?: PostFormValues }) {
       {post?.id ? <input type="hidden" name="id" value={post.id} /> : null}
 
       <div className="flex flex-col gap-6 lg:gap-8">
-        <Panel title="The piece of writing">
+        <Panel title="The article">
           <div className="grid gap-5 p-4 sm:p-6 sm:grid-cols-2">
             <Field label="Title" error={error("title")} className="sm:col-span-2">
               <input name="title" defaultValue={post?.title} required className={inputClass} />
             </Field>
 
             <Field
-              label="Address (slug)"
-              hint="Leave empty to build it from the title."
+              label="Web address (optional)"
+              hint="Leave empty — it is created from the title for you."
               error={error("slug")}
             >
               <input name="slug" defaultValue={post?.slug} className={inputClass} />
@@ -80,8 +81,8 @@ export function PostForm({ post }: { post?: PostFormValues }) {
             </Field>
 
             <Field
-              label="Excerpt"
-              hint="One or two lines. Shown on cards and used as the meta description."
+              label="Short introduction"
+              hint="One or two sentences, shown in the list of articles."
               error={error("excerpt")}
               className="sm:col-span-2"
             >
@@ -95,8 +96,8 @@ export function PostForm({ post }: { post?: PostFormValues }) {
             </Field>
 
             <Field
-              label="Body"
-              hint="Markdown. Use ## for section headings. Raw HTML is ignored on purpose."
+              label="The article itself"
+              hint="Leave an empty line between paragraphs. To make a section title, start the line with ## and a space."
               error={error("body")}
               className="sm:col-span-2"
             >
@@ -104,18 +105,18 @@ export function PostForm({ post }: { post?: PostFormValues }) {
                 name="body"
                 defaultValue={post?.body}
                 required
-                rows={26}
-                className={`${inputClass} resize-y font-mono text-[13px] leading-relaxed`}
+                rows={20}
+                className={`${inputClass} resize-y leading-relaxed`}
               />
             </Field>
           </div>
         </Panel>
 
-        <Panel title="Short answer and questions">
+        <Panel title="Quick answer and common questions (optional)">
           <div className="grid gap-5 p-4 sm:p-6">
             <Field
-              label="The short answer"
-              hint="One point per line, each one a complete sentence that makes sense on its own. Shown above the body — it is what search and AI answers quote."
+              label="The quick answer"
+              hint="A few key points, one per line, each a full sentence. Shown above the article — Google and AI assistants often quote them."
               error={error("takeaways")}
             >
               <textarea
@@ -127,8 +128,8 @@ export function PostForm({ post }: { post?: PostFormValues }) {
             </Field>
 
             <Field
-              label="Questions"
-              hint="Start a question with “Q:” and its answer with “A:”, one blank line between pairs. Shown at the end and marked up for search."
+              label="Common questions"
+              hint="Write “Q:” before each question and “A:” before its answer, with an empty line between pairs. Shown at the end of the article."
               error={error("faqs")}
             >
               <textarea
@@ -136,13 +137,13 @@ export function PostForm({ post }: { post?: PostFormValues }) {
                 defaultValue={formatFaqs(post?.faqs ?? [])}
                 rows={10}
                 placeholder={"Q: How do I clean it?\nA: With a dry cloth.\n\nQ: …\nA: …"}
-                className={`${inputClass} resize-y font-mono text-[13px] leading-relaxed`}
+                className={`${inputClass} resize-y leading-relaxed`}
               />
             </Field>
           </div>
         </Panel>
 
-        <Panel title="Photograph">
+        <Panel title="Photo">
           <ImageField
             images={post?.image ? [post.image] : []}
             altFallback={post?.title || "What this photograph shows"}
@@ -151,24 +152,24 @@ export function PostForm({ post }: { post?: PostFormValues }) {
       </div>
 
       <div className="flex flex-col gap-6 lg:gap-8">
-        <Panel title="Publishing">
+        <Panel title="Show it on the website?">
           <div className="flex flex-col gap-5 p-4 sm:p-6">
-            <Field label="Status">
+            <Field label="Visibility">
               <select name="status" defaultValue={post?.status ?? "DRAFT"} className={inputClass}>
-                <option value="DRAFT">Draft — not on the site</option>
-                <option value="PUBLISHED">Published</option>
-                <option value="ARCHIVED">Archived</option>
+                <option value="DRAFT">Hidden — not on the website yet</option>
+                <option value="PUBLISHED">Shown on the website</option>
+                <option value="ARCHIVED">Put away — hidden, but kept</option>
               </select>
             </Field>
 
-            <label className="flex items-center gap-3 text-[14px]">
+            <label className="flex items-center gap-3 text-[16px]">
               <input
                 type="checkbox"
                 name="featured"
                 defaultChecked={post?.featured}
                 className="size-4 accent-[#C69B54]"
               />
-              Feature at the top of the journal
+              Pin this article at the top
             </label>
 
             <div className="flex flex-wrap items-center gap-3 border-t border-ink/10 pt-5">
@@ -180,22 +181,18 @@ export function PostForm({ post }: { post?: PostFormValues }) {
                   rel="noopener noreferrer"
                   className={dashButton.outline}
                 >
-                  View ↗
+                  See it on the website ↗
                 </Link>
               ) : null}
             </div>
 
-            {state.message ? (
-              <p role="status" className={`text-[13px] ${state.ok ? "text-muted" : "text-gold"}`}>
-                {state.message}
-              </p>
-            ) : null}
+            {state.message ? <FormMessage ok={state.ok}>{state.message}</FormMessage> : null}
           </div>
         </Panel>
 
-        <Panel title="Attribution">
+        <Panel title="Extra information">
           <div className="flex flex-col gap-5 p-4 sm:p-6">
-            <Field label="Author" error={error("author")}>
+            <Field label="Written by" error={error("author")}>
               <input
                 name="author"
                 defaultValue={post?.author ?? "The Maker"}
@@ -204,8 +201,8 @@ export function PostForm({ post }: { post?: PostFormValues }) {
             </Field>
 
             <Field
-              label="Reading time"
-              hint="Leave at 0 and we count the words for you."
+              label="Reading time (minutes)"
+              hint="Leave at 0 and it is worked out for you."
               error={error("readMinutes")}
             >
               <input
@@ -218,7 +215,7 @@ export function PostForm({ post }: { post?: PostFormValues }) {
               />
             </Field>
 
-            <Field label="Tags" hint="Comma separated. Twelve at most." error={error("tags")}>
+            <Field label="Tags" hint="Keywords separated by commas. Up to twelve." error={error("tags")}>
               <input
                 name="tags"
                 defaultValue={post?.tags?.join(", ") ?? ""}
@@ -228,8 +225,8 @@ export function PostForm({ post }: { post?: PostFormValues }) {
             </Field>
 
             <Field
-              label="Image slot"
-              hint="The brief, shown in its place until a photograph is uploaded."
+              label="Photo description"
+              hint="Shown in place of the photo until you add one. You can leave it as it is."
             >
               <input
                 name="imageSlot"
@@ -240,11 +237,11 @@ export function PostForm({ post }: { post?: PostFormValues }) {
           </div>
         </Panel>
 
-        <Panel title="Guide and links">
+        <Panel title="Links to other pages">
           <div className="flex flex-col gap-5 p-4 sm:p-6">
             <Field
-              label="Guide"
-              hint="The topic cluster this post belongs to. It links up to that guide and the guide lists it."
+              label="Related guide"
+              hint="Pick the guide this article belongs to, if any."
               error={error("cluster")}
             >
               <select name="cluster" defaultValue={post?.cluster ?? ""} className={inputClass}>
@@ -258,8 +255,8 @@ export function PostForm({ post }: { post?: PostFormValues }) {
             </Field>
 
             <Field
-              label="Products"
-              hint="Slugs of the pieces this post recommends, comma separated. Shown under the post, and the post is linked from each product page."
+              label="Related products"
+              hint="Optional. The web addresses of products to show under the article, separated by commas."
               error={error("products")}
             >
               <input
@@ -272,9 +269,9 @@ export function PostForm({ post }: { post?: PostFormValues }) {
           </div>
         </Panel>
 
-        <Panel title="Search appearance">
+        <Panel title="How it looks on Google (optional)">
           <div className="flex flex-col gap-5 p-4 sm:p-6">
-            <Field label="SEO title" hint="Up to 70 characters." error={error("seoTitle")}>
+            <Field label="Title on Google" hint="Leave empty and the article title is used." error={error("seoTitle")}>
               <input
                 name="seoTitle"
                 maxLength={70}
@@ -284,8 +281,8 @@ export function PostForm({ post }: { post?: PostFormValues }) {
             </Field>
 
             <Field
-              label="Meta description"
-              hint="Up to 180 characters. Falls back to the excerpt."
+              label="Description on Google"
+              hint="Leave empty and the short introduction is used."
               error={error("seoDescription")}
             >
               <textarea
@@ -300,19 +297,19 @@ export function PostForm({ post }: { post?: PostFormValues }) {
         </Panel>
 
         {post?.id ? (
-          <Panel title="Danger">
+          <Panel title="Delete this article">
             <div className="flex flex-col gap-3 p-4 sm:p-6">
-              <p className="text-[13px] leading-relaxed text-faint">
-                Deleting removes the post and its public page for good.
+              <p className="text-[15px] leading-relaxed text-muted">
+                This removes the article from the website for good. If you only want to hide it, choose “Put away” above instead.
               </p>
-              <button
-                type="submit"
+              <ConfirmButton
                 formAction={deletePost}
                 formNoValidate
+                confirm="Delete this article for good? It will disappear from the website. This cannot be undone."
                 className={`${dashButton.danger} self-start`}
               >
-                Delete post
-              </button>
+                Delete this article
+              </ConfirmButton>
             </div>
           </Panel>
         ) : null}

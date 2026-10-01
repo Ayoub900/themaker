@@ -96,7 +96,7 @@ async function seedProducts() {
       description: product.description,
       priceCents: product.priceCents,
       currency: currency.code,
-      stock: product.stock,
+      stock: product.stock > 0 ? product.stock : null,
       leadTime: product.leadTime,
       dimensions: product.dimensions,
       weight: product.weight,

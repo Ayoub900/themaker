@@ -39,7 +39,7 @@ export function ProductCard({
         <span className="text-[13px] tracking-[0.08em] text-faint">
           {product.material}
         </span>
-        {product.stock === 0 ? (
+        {(product.stock ?? 0) === 0 ? (
           <span className="text-[11px] uppercase tracking-[0.16em] text-gold">
             Made to order
           </span>

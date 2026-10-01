@@ -59,7 +59,7 @@ export default async function HomePage() {
             label={hero.imageSlot}
             photo={hero.photo}
             ratio="21 / 9"
-            sizes="100vw"
+            sizes="(min-width: 1280px) 1152px, 100vw"
             priority
             className="mt-5 w-full"
           />

@@ -63,7 +63,7 @@ export const productSchema = z.object({
   summary: trimmed(10, 300),
   description: trimmed(10, 20000),
   priceCents: z.number().int().min(0).max(100_000_000),
-  stock: z.number().int().min(0).max(10_000),
+  stock: z.number().int().min(0).max(10_000).nullable(),
   leadTime: trimmed(2, 120),
   dimensions: z.string().trim().max(200).optional().or(z.literal("")),
   weight: z.string().trim().max(120).optional().or(z.literal("")),

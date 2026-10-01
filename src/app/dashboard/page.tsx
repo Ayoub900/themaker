@@ -5,6 +5,8 @@ import {
   Empty,
   PageHeading,
   Panel,
+  RowActions,
+  RowLink,
   StatRow,
   StatTile,
   StatusPill,
@@ -37,7 +39,7 @@ export default async function DashboardOverview() {
     prisma.product.count({ where: { status: "PUBLISHED" } }),
     prisma.post.count({ where: { status: "DRAFT" } }),
     prisma.product.findMany({
-      where: { status: "PUBLISHED", stock: { lte: 2 } },
+      where: { status: "PUBLISHED", stock: { not: null, lte: 2 } },
       orderBy: { stock: "asc" },
       take: 5,
       select: { id: true, name: true, slug: true, stock: true, reference: true },
@@ -81,70 +83,76 @@ export default async function DashboardOverview() {
   return (
     <>
       <PageHeading
-        title={firstName ? `Hello, ${firstName}` : "Overview"}
-        subtitle="What needs a decision today."
+        title={firstName ? `Hello, ${firstName}` : "Welcome"}
+        subtitle={
+          pendingOrders + newMessages === 0
+            ? "You're all caught up. Nothing is waiting for you."
+            : "Here is what is waiting for you today."
+        }
         action={
           <div className="flex flex-wrap gap-3">
-            <DashLink href="/dashboard/products/new">New product</DashLink>
-            <DashLink href="/dashboard/posts/new" variant="solid">
-              New journal post
+            <DashLink href="/dashboard/products/new" variant="solid">
+              + Add a product
             </DashLink>
+            <DashLink href="/dashboard/posts/new">+ Write a blog article</DashLink>
           </div>
         }
       />
 
       <StatRow>
         <StatTile
-          label="Orders awaiting you"
+          label="New orders to confirm"
           value={pendingOrders}
           emphasis={pendingOrders > 0}
-          hint={pendingOrders === 0 ? "Nothing to confirm" : "Needs confirming"}
+          hint={pendingOrders === 0 ? "Nothing to do" : "Click to see them"}
           href="/dashboard/orders?status=PENDING"
         />
         <StatTile
-          label="Unread messages"
+          label="Messages to read"
           value={newMessages}
           emphasis={newMessages > 0}
-          hint={newMessages === 0 ? "Inbox clear" : "Waiting on a reply"}
+          hint={newMessages === 0 ? "Nothing to do" : "Click to read them"}
           href="/dashboard/messages?status=NEW"
         />
         <StatTile
-          label="Last 30 days"
+          label="Sales in the last 30 days"
           value={formatCents(revenue._sum.totalCents ?? 0)}
-          hint="Excluding cancellations"
+          hint="Cancelled orders not counted"
           href="/dashboard/orders"
         />
         <StatTile
-          label="Catalogue"
+          label="Products on your website"
           value={publishedProducts}
-          hint={plural(draftPosts, "journal draft")}
+          hint={
+            draftPosts > 0
+              ? `${plural(draftPosts, "article")} not published yet`
+              : "See all products"
+          }
           href="/dashboard/products"
         />
       </StatRow>
 
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr] lg:gap-8">
         <Panel
-          title="Recent orders"
+          title="Latest orders"
           action={
-            <Link
-              href="/dashboard/orders"
-              className="text-[11px] uppercase tracking-[0.16em] text-muted hover:text-gold"
-            >
-              All orders →
+            <Link href="/dashboard/orders" className="text-[15px] text-muted underline hover:text-gold">
+              See all orders →
             </Link>
           }
         >
           {recentOrders.length === 0 ? (
-            <Empty>No orders yet.</Empty>
+            <Empty>No orders yet. When a customer orders, it will appear here.</Empty>
           ) : (
             <Table>
               <thead>
                 <tr>
-                  <Th>Reference</Th>
+                  <Th>Order</Th>
                   <Th>Customer</Th>
-                  <Th>Total</Th>
-                  <Th>Status</Th>
-                  <Th>Placed</Th>
+                  <Th>Amount</Th>
+                  <Th>Progress</Th>
+                  <Th>Date</Th>
+                  <Th>Options</Th>
                 </tr>
               </thead>
               <tbody>
@@ -159,14 +167,21 @@ export default async function DashboardOverview() {
                       </Link>
                     </Td>
                     <Td label="Customer">{order.customerName}</Td>
-                    <Td label="Total" className="lining-nums tabular-nums">
+                    <Td label="Amount" className="lining-nums tabular-nums">
                       {formatCents(order.totalCents, order.currency)}
                     </Td>
-                    <Td label="Status">
+                    <Td label="Progress">
                       <StatusPill status={order.status} />
                     </Td>
-                    <Td label="Placed" className="whitespace-nowrap text-faint">
+                    <Td label="Date" className="whitespace-nowrap text-muted">
                       {formatDateTime(order.createdAt)}
+                    </Td>
+                    <Td label="Options">
+                      <RowActions>
+                        <RowLink tone="solid" href={`/dashboard/orders/${order.id}`}>
+                          Open
+                        </RowLink>
+                      </RowActions>
                     </Td>
                   </tr>
                 ))}
@@ -177,18 +192,15 @@ export default async function DashboardOverview() {
 
         <div className="flex flex-col gap-6 lg:gap-8">
           <Panel
-            title="Inbox"
+            title="Latest messages"
             action={
-              <Link
-                href="/dashboard/messages"
-                className="text-[11px] uppercase tracking-[0.16em] text-muted hover:text-gold"
-              >
-                All →
+              <Link href="/dashboard/messages" className="text-[15px] text-muted underline hover:text-gold">
+                See all →
               </Link>
             }
           >
             {recentMessages.length === 0 ? (
-              <Empty>Nothing waiting.</Empty>
+              <Empty>No messages yet.</Empty>
             ) : (
               <ul>
                 {recentMessages.map((message) => (
@@ -198,12 +210,11 @@ export default async function DashboardOverview() {
                       className="flex flex-col gap-1.5 px-4 py-4 transition-colors hover:bg-parchment/60 sm:px-6"
                     >
                       <div className="flex items-center justify-between gap-3">
-                        <span className="text-[14px] text-ink">{message.subject}</span>
+                        <span className="text-[16px] text-ink">{message.subject}</span>
                         <StatusPill status={message.status} />
                       </div>
-                      <span className="text-[12px] text-faint">
-                        {message.name} · {message.topic.toLowerCase()} ·{" "}
-                        {formatDateTime(message.createdAt)}
+                      <span className="text-[14px] text-muted">
+                        From {message.name} · {formatDateTime(message.createdAt)}
                       </span>
                     </Link>
                   </li>
@@ -212,10 +223,9 @@ export default async function DashboardOverview() {
             )}
           </Panel>
 
-          <Panel title="Running low">
-            {lowStock.length === 0 ? (
-              <Empty>Everything is stocked.</Empty>
-            ) : (
+          {lowStock.length > 0 ? (
+          <Panel title="Almost sold out">
+            {(
               <ul>
                 {lowStock.map((product) => (
                   <li key={product.id} className="border-b border-ink/8 last:border-0">
@@ -223,11 +233,11 @@ export default async function DashboardOverview() {
                       href={`/dashboard/products/${product.id}`}
                       className="flex items-center justify-between gap-4 px-4 py-3.5 transition-colors hover:bg-parchment/60 sm:px-6"
                     >
-                      <span className="text-[14px]">{product.name}</span>
+                      <span className="text-[16px]">{product.name}</span>
                       <span
-                        className={`text-[13px] lining-nums tabular-nums ${product.stock === 0 ? "text-gold" : "text-faint"}`}
+                        className={`text-[15px] lining-nums tabular-nums ${product.stock === 0 ? "font-medium text-red-700" : "text-muted"}`}
                       >
-                        {product.stock === 0 ? "out" : `${product.stock} left`}
+                        {product.stock === 0 ? "Sold out" : `${product.stock} left`}
                       </span>
                     </Link>
                   </li>
@@ -235,6 +245,7 @@ export default async function DashboardOverview() {
               </ul>
             )}
           </Panel>
+          ) : null}
         </div>
       </div>
     </>

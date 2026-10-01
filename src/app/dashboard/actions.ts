@@ -151,7 +151,7 @@ function readProductForm(data: FormData) {
     summary: str(data, "summary"),
     description: str(data, "description"),
     priceCents: parsePriceToCents(str(data, "price")),
-    stock: int(data, "stock"),
+    stock: bool(data, "trackStock") ? int(data, "stock") : null,
     leadTime: str(data, "leadTime") || "Ships in 5 working days",
     dimensions: str(data, "dimensions"),
     weight: str(data, "weight"),
@@ -430,7 +430,7 @@ export async function updateOrder(
     const before = await prisma.order.findUnique({ where: { id } });
     if (!before) return { ok: false, message: "That order no longer exists." };
 
-    // Confirming an order is what takes the pieces out of stock; cancelling a
+    // Confirming an order takes tracked pieces out of stock (made-to-order pieces have no count); cancelling a
     // confirmed order puts them back. Both are done once, never twice.
     const wasCommitted = before.status !== "PENDING" && before.status !== "CANCELLED";
     const willCommit = status !== "PENDING" && status !== "CANCELLED";
@@ -438,8 +438,8 @@ export async function updateOrder(
     if (!wasCommitted && willCommit) {
       await Promise.all(
         before.items.map((item) =>
-          prisma.product.update({
-            where: { id: item.productId },
+          prisma.product.updateMany({
+            where: { id: item.productId, stock: { not: null } },
             data: { stock: { decrement: item.quantity } },
           }),
         ),
@@ -447,8 +447,8 @@ export async function updateOrder(
     } else if (wasCommitted && status === "CANCELLED") {
       await Promise.all(
         before.items.map((item) =>
-          prisma.product.update({
-            where: { id: item.productId },
+          prisma.product.updateMany({
+            where: { id: item.productId, stock: { not: null } },
             data: { stock: { increment: item.quantity } },
           }),
         ),

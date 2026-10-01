@@ -3,9 +3,14 @@ import Link from "next/link";
 import {
   Empty,
   FilterTabs,
+  PAGE_SIZE,
   PageHeading,
+  Pagination,
   Panel,
+  RowActions,
+  RowLink,
   StatusPill,
+  parsePage,
   Table,
   Td,
   Th,
@@ -29,18 +34,25 @@ type OrderStatus = Exclude<(typeof STATUSES)[number], "ALL">;
 export default async function OrdersListPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; page?: string }>;
 }) {
-  const { status } = await searchParams;
+  const { status, page: pageParam } = await searchParams;
   const active = (status ?? "ALL").toUpperCase();
 
+  const where =
+    active !== "ALL" && STATUSES.includes(active as (typeof STATUSES)[number])
+      ? { status: active as OrderStatus }
+      : {};
+
+  const total = await prisma.order.count({ where });
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const page = Math.min(parsePage(pageParam), pageCount);
+
   const orders = await prisma.order.findMany({
-    where:
-      active !== "ALL" && STATUSES.includes(active as (typeof STATUSES)[number])
-        ? { status: active as OrderStatus }
-        : {},
+    where,
     orderBy: { createdAt: "desc" },
-    take: 200,
+    skip: (page - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
     select: {
       id: true,
       number: true,
@@ -58,11 +70,11 @@ export default async function OrdersListPage({
     <>
       <PageHeading
         title="Orders"
-        subtitle={plural(orders.length, "order")}
+        subtitle={`${plural(total, "order")} — click an order to see what to send and where.`}
       />
 
       <Panel
-        title="All orders"
+        title="Your orders"
         action={
           <FilterTabs
             label="Filter orders by status"
@@ -75,17 +87,18 @@ export default async function OrdersListPage({
         }
       >
         {orders.length === 0 ? (
-          <Empty>No orders with that status.</Empty>
+          <Empty>No orders here.</Empty>
         ) : (
           <Table>
             <thead>
               <tr>
-                <Th>Reference</Th>
+                <Th>Order</Th>
                 <Th>Customer</Th>
-                <Th>Pieces</Th>
-                <Th>Total</Th>
-                <Th>Status</Th>
-                <Th>Placed</Th>
+                <Th>Items</Th>
+                <Th>Amount</Th>
+                <Th>Progress</Th>
+                <Th>Date</Th>
+                  <Th>Options</Th>
               </tr>
             </thead>
             <tbody>
@@ -103,21 +116,28 @@ export default async function OrdersListPage({
                     </Td>
                     <Td label="Customer">
                       {order.customerName}
-                      <span className="mt-1 block text-[12px] text-faint">
+                      <span className="mt-1 block text-[14px] text-muted">
                         {order.customerEmail}
                       </span>
                     </Td>
-                    <Td label="Pieces" className="lining-nums tabular-nums text-muted">
+                    <Td label="Items" className="lining-nums tabular-nums text-muted">
                       {pieces}
                     </Td>
-                    <Td label="Total" className="lining-nums tabular-nums">
+                    <Td label="Amount" className="lining-nums tabular-nums">
                       {formatCents(order.totalCents, order.currency)}
                     </Td>
-                    <Td label="Status">
+                    <Td label="Progress">
                       <StatusPill status={order.status} />
                     </Td>
-                    <Td label="Placed" className="whitespace-nowrap text-faint">
+                    <Td label="Date" className="whitespace-nowrap text-muted">
                       {formatDateTime(order.createdAt)}
+                    </Td>
+                    <Td label="Options">
+                      <RowActions>
+                        <RowLink tone="solid" href={`/dashboard/orders/${order.id}`}>
+                          Open
+                        </RowLink>
+                      </RowActions>
                     </Td>
                   </tr>
                 );
@@ -125,6 +145,17 @@ export default async function OrdersListPage({
             </tbody>
           </Table>
         )}
+        <Pagination
+          page={page}
+          total={total}
+          hrefFor={(p) => {
+            const params = new URLSearchParams();
+            if (active !== "ALL") params.set("status", active);
+            if (p > 1) params.set("page", String(p));
+            const query = params.toString();
+            return query ? `/dashboard/orders?${query}` : "/dashboard/orders";
+          }}
+        />
       </Panel>
     </>
   );

@@ -76,7 +76,7 @@ export default async function ProductPage({
     ...recommendedIn,
     ...guide.filter((pillar) => !recommendedIn.some((post) => post.id === pillar.id)),
   ].slice(0, 3);
-  const inStock = product.stock > 0;
+  const inStock = (product.stock ?? 0) > 0;
 
   const details = [
     { label: "Reference", value: product.reference },

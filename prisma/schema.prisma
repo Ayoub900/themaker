@@ -102,7 +102,7 @@ model Product {
   description    String // markdown, long form
   priceCents     Int
   currency       String        @default("MAD")
-  stock          Int           @default(0)
+  stock          Int? // null = made to order, not tracked
   leadTime       String        @default("Ships in 5 working days")
   dimensions     String?
   weight         String?

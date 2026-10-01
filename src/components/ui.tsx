@@ -151,7 +151,9 @@ export function ImageSlot({
           alt={shown.alt}
           fill
           sizes={sizes}
-          priority={priority}
+          preload={priority}
+          fetchPriority={priority ? "high" : undefined}
+          quality={priority ? 60 : 75}
           className="object-cover"
         />
       </div>

@@ -8,6 +8,7 @@ import {
   formatBytes,
   imageUrl,
 } from "@/lib/images";
+import { rateLimit, requestIp } from "@/lib/rate-limit";
 import { saveUpload } from "@/lib/uploads";
 
 export const runtime = "nodejs";
@@ -28,6 +29,17 @@ export async function POST(request: NextRequest) {
     await requireSession();
   } catch {
     return NextResponse.json({ message: "Your session has expired." }, { status: 401 });
+  }
+
+  const limited = await rateLimit(`upload:${requestIp(request.headers)}`, {
+    limit: 60,
+    windowMs: 10 * 60_000,
+  });
+  if (!limited.allowed) {
+    return NextResponse.json(
+      { message: "Too many uploads at once. Wait a minute and try again." },
+      { status: 429, headers: { "Retry-After": String(limited.retryAfterSeconds) } },
+    );
   }
 
   // Refuse an oversized body before reading it, when the sender declares one.

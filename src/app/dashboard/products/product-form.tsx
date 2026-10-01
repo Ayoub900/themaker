@@ -6,7 +6,8 @@ import { useFormStatus } from "react-dom";
 
 import { deleteProduct, saveProduct, type ActionState } from "@/app/dashboard/actions";
 import { ImageField } from "@/components/dashboard/image-field";
-import { Field, Panel, dashButton, inputClass } from "@/components/dashboard/ui";
+import { ConfirmButton } from "@/components/dashboard/confirm-button";
+import { Field, FormMessage, Panel, dashButton, inputClass } from "@/components/dashboard/ui";
 import { currency } from "@/config/site";
 import { MAX_PRODUCT_IMAGES, type ImageRef } from "@/lib/images";
 import { centsToInput } from "@/lib/money";
@@ -23,7 +24,7 @@ export type ProductFormValues = {
   summary: string;
   description: string;
   priceCents: number;
-  stock: number;
+  stock: number | null;
   leadTime: string;
   dimensions: string | null;
   weight: string | null;
@@ -38,11 +39,47 @@ export type ProductFormValues = {
   seoDescription: string | null;
 };
 
+/** Stock is optional: most pieces are made on demand, so it is off by default. */
+function StockField({ initial, error }: { initial: number | null; error?: string }) {
+  const [tracked, setTracked] = useState(initial !== null);
+
+  return (
+    <div className="flex flex-col gap-3">
+      <label className="flex items-start gap-3 text-[16px]">
+        <input
+          type="checkbox"
+          name="trackStock"
+          checked={tracked}
+          onChange={(event) => setTracked(event.target.checked)}
+          className="mt-1"
+        />
+        <span>
+          Count how many I have ready
+          <span className="block text-[14px] text-muted">
+            Leave this off if you make each one only when it is ordered.
+          </span>
+        </span>
+      </label>
+      {tracked ? (
+        <Field label="How many are ready" error={error}>
+          <input
+            type="number"
+            name="stock"
+            min={0}
+            defaultValue={initial ?? 1}
+            className={inputClass}
+          />
+        </Field>
+      ) : null}
+    </div>
+  );
+}
+
 function SaveButton({ isNew }: { isNew: boolean }) {
   const { pending } = useFormStatus();
   return (
     <button type="submit" disabled={pending} className={dashButton.solid}>
-      {pending ? "Saving…" : isNew ? "Create product" : "Save changes"}
+      {pending ? "Saving…" : isNew ? "Save the new product" : "Save changes"}
     </button>
   );
 }
@@ -62,21 +99,21 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
 
       {/* ------------------------------------------------------- main column */}
       <div className="flex flex-col gap-6 lg:gap-8">
-        <Panel title="The piece">
+        <Panel title="About this product">
           <div className="grid gap-5 p-4 sm:p-6 sm:grid-cols-2">
             <Field label="Name" error={error("name")} className="sm:col-span-2">
               <input name="name" defaultValue={product?.name} required className={inputClass} />
             </Field>
 
             <Field
-              label="Address (slug)"
-              hint="Leave empty to build it from the name."
+              label="Web address (optional)"
+              hint="Leave empty — it is created from the name for you."
               error={error("slug")}
             >
               <input name="slug" defaultValue={product?.slug} className={inputClass} />
             </Field>
 
-            <Field label="Reference" hint="e.g. 01 / 24" error={error("reference")}>
+            <Field label="Product code" hint="Your own short code, for example 01 / 24." error={error("reference")}>
               <input name="reference" defaultValue={product?.reference} required className={inputClass} />
             </Field>
 
@@ -95,7 +132,7 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
 
             <Field
               label="Summary"
-              hint="One line. Used on cards and as the meta description fallback."
+              hint="One short sentence, shown under the name in lists."
               error={error("summary")}
               className="sm:col-span-2"
             >
@@ -104,7 +141,7 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
 
             <Field
               label="Description"
-              hint="Markdown. Headings, lists and links; raw HTML is ignored."
+              hint="Tell the story of the piece. Leave an empty line between paragraphs."
               error={error("description")}
               className="sm:col-span-2"
             >
@@ -112,14 +149,14 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
                 name="description"
                 defaultValue={product?.description}
                 required
-                rows={12}
-                className={`${inputClass} resize-y font-mono text-[13px]`}
+                rows={10}
+                className={`${inputClass} resize-y leading-relaxed`}
               />
             </Field>
           </div>
         </Panel>
 
-        <Panel title="Photographs">
+        <Panel title="Photos">
           <ImageField
             images={product?.images ?? []}
             max={MAX_PRODUCT_IMAGES}
@@ -127,7 +164,7 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
           />
         </Panel>
 
-        <Panel title="Details">
+        <Panel title="Size and delivery">
           <div className="grid gap-5 p-4 sm:p-6 sm:grid-cols-2">
             <Field label="Dimensions" error={error("dimensions")}>
               <input
@@ -147,7 +184,7 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
               />
             </Field>
 
-            <Field label="Lead time" error={error("leadTime")} className="sm:col-span-2">
+            <Field label="Delivery time" error={error("leadTime")} className="sm:col-span-2">
               <input
                 name="leadTime"
                 defaultValue={product?.leadTime ?? "Ships in 5 working days"}
@@ -155,7 +192,7 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
               />
             </Field>
 
-            <Field label="Care note" error={error("care")} className="sm:col-span-2">
+            <Field label="How to look after it" error={error("care")} className="sm:col-span-2">
               <textarea
                 name="care"
                 defaultValue={product?.care ?? ""}
@@ -173,7 +210,7 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
         </Panel>
 
         <Panel
-          title="Specification"
+          title="Extra details (optional)"
           action={
             <button
               type="button"
@@ -209,8 +246,8 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
                 </button>
               </div>
             ))}
-            <p className="text-[12px] text-faint">
-              Empty rows are dropped when you save. Twelve at most.
+            <p className="text-[14px] text-muted">
+              For example “Metal” and “Brass”. Empty lines are ignored. Up to twelve.
             </p>
           </div>
         </Panel>
@@ -218,21 +255,21 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
 
       {/* -------------------------------------------------------- side column */}
       <div className="flex flex-col gap-6 lg:gap-8">
-        <Panel title="Publishing">
+        <Panel title="Show it on the website?">
           <div className="flex flex-col gap-5 p-4 sm:p-6">
-            <Field label="Status">
+            <Field label="Visibility">
               <select
                 name="status"
                 defaultValue={product?.status ?? "DRAFT"}
                 className={inputClass}
               >
-                <option value="DRAFT">Draft — not on the site</option>
-                <option value="PUBLISHED">Published</option>
-                <option value="ARCHIVED">Archived</option>
+                <option value="DRAFT">Hidden — not on the website yet</option>
+                <option value="PUBLISHED">Shown on the website</option>
+                <option value="ARCHIVED">Put away — hidden, but kept</option>
               </select>
             </Field>
 
-            <label className="flex items-center gap-3 text-[14px]">
+            <label className="flex items-center gap-3 text-[16px]">
               <input
                 type="checkbox"
                 name="featured"
@@ -242,7 +279,7 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
               Show on the home page
             </label>
 
-            <Field label="Sort order" hint="Lower numbers come first.">
+            <Field label="Position in the list" hint="1 is first, then 2, 3… Leave at 0 if unsure.">
               <input
                 type="number"
                 name="sortIndex"
@@ -261,23 +298,16 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
                   rel="noopener noreferrer"
                   className={dashButton.outline}
                 >
-                  View ↗
+                  See it on the website ↗
                 </Link>
               ) : null}
             </div>
 
-            {state.message ? (
-              <p
-                role="status"
-                className={`text-[13px] ${state.ok ? "text-muted" : "text-gold"}`}
-              >
-                {state.message}
-              </p>
-            ) : null}
+            {state.message ? <FormMessage ok={state.ok}>{state.message}</FormMessage> : null}
           </div>
         </Panel>
 
-        <Panel title="Price & stock">
+        <Panel title="Price">
           <div className="grid gap-5 p-4 sm:p-6 sm:grid-cols-2">
             <Field label={`Price (${currency.symbol})`} error={error("priceCents")}>
               <input
@@ -290,23 +320,15 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
               />
             </Field>
 
-            <Field label="In stock" error={error("stock")}>
-              <input
-                type="number"
-                name="stock"
-                min={0}
-                defaultValue={product?.stock ?? 0}
-                className={inputClass}
-              />
-            </Field>
+            <StockField initial={product?.stock ?? null} error={error("stock")} />
           </div>
         </Panel>
 
-        <Panel title="Search appearance">
+        <Panel title="How it looks on Google (optional)">
           <div className="flex flex-col gap-5 p-4 sm:p-6">
             <Field
-              label="SEO title"
-              hint="Up to 70 characters. Falls back to the product name."
+              label="Title on Google"
+              hint="Leave empty and the product name is used."
               error={error("seoTitle")}
             >
               <input
@@ -318,8 +340,8 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
             </Field>
 
             <Field
-              label="Meta description"
-              hint="Up to 180 characters. Falls back to the summary."
+              label="Description on Google"
+              hint="Leave empty and the short summary is used."
               error={error("seoDescription")}
             >
               <textarea
@@ -334,20 +356,20 @@ export function ProductForm({ product }: { product?: ProductFormValues }) {
         </Panel>
 
         {product?.id ? (
-          <Panel title="Danger">
+          <Panel title="Delete this product">
             <div className="flex flex-col gap-3 p-4 sm:p-6">
-              <p className="text-[13px] leading-relaxed text-faint">
-                Deleting removes the product and its public page. Past orders keep their
-                own copy of the line, so history is not affected.
+              <p className="text-[15px] leading-relaxed text-muted">
+                This removes the product and its page from the website for good. Past orders keep their
+                own copy, so your sales history is safe. If you only want to hide it, choose “Put away” above instead.
               </p>
-              <button
-                type="submit"
+              <ConfirmButton
                 formAction={deleteProduct}
                 formNoValidate
+                confirm="Delete this product for good? It will disappear from the website. This cannot be undone."
                 className={`${dashButton.danger} self-start`}
               >
-                Delete product
-              </button>
+                Delete this product
+              </ConfirmButton>
             </div>
           </Panel>
         ) : null}

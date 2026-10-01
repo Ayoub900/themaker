@@ -35,7 +35,7 @@ export default async function MessageDetailPage({
         action={
           <div className="flex flex-wrap items-center gap-3">
             <StatusPill status={message.status === "NEW" ? "READ" : message.status} />
-            <DashLink href="/dashboard/messages">← Inbox</DashLink>
+            <DashLink href="/dashboard/messages">← Back to messages</DashLink>
           </div>
         }
       />
@@ -43,26 +43,26 @@ export default async function MessageDetailPage({
       <div className="grid gap-6 lg:gap-8 lg:grid-cols-[1.5fr_1fr]">
         <div className="flex flex-col gap-6 lg:gap-8">
           <Panel
-            title={`About: ${message.topic.toLowerCase()}`}
+            title={`Their message (${message.topic.toLowerCase()})`}
             action={
               hasEmail ? (
                 <a
                   href={`mailto:${message.email}?subject=${mailSubject}&body=${mailBody}`}
-                  className="text-[11px] uppercase tracking-[0.16em] text-muted hover:text-gold"
+                  className="text-[15px] text-muted underline hover:text-gold"
                 >
                   Reply by email ↗
                 </a>
               ) : null
             }
           >
-            <div className="whitespace-pre-wrap px-4 py-5 sm:px-6 sm:py-6 text-[15px] leading-[1.8] text-ink-soft">
+            <div className="whitespace-pre-wrap px-4 py-5 sm:px-6 sm:py-6 text-[17px] leading-[1.8] text-ink-soft">
               {message.body}
             </div>
           </Panel>
 
           {message.reply ? (
-            <Panel title={`Our reply${message.repliedAt ? ` · ${formatDateTime(message.repliedAt)}` : ""}`}>
-              <div className="whitespace-pre-wrap px-4 py-5 sm:px-6 sm:py-6 text-[15px] leading-[1.8] text-muted">
+            <Panel title={`What you answered${message.repliedAt ? ` · ${formatDateTime(message.repliedAt)}` : ""}`}>
+              <div className="whitespace-pre-wrap px-4 py-5 sm:px-6 sm:py-6 text-[17px] leading-[1.8] text-muted">
                 {message.reply}
               </div>
             </Panel>
@@ -70,14 +70,14 @@ export default async function MessageDetailPage({
         </div>
 
         <div className="flex flex-col gap-6 lg:gap-8">
-          <Panel title="Sender">
-            <div className="flex flex-col gap-4 p-4 sm:p-6 text-[14px]">
+          <Panel title="Who wrote">
+            <div className="flex flex-col gap-4 p-4 sm:p-6 text-[16px]">
               <div className="flex flex-col gap-1">
-                <span className="text-[11px] uppercase tracking-[0.16em] text-faint">Name</span>
+                <span className="text-[14px] text-muted">Name</span>
                 <span>{message.name}</span>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-[11px] uppercase tracking-[0.16em] text-faint">Email</span>
+                <span className="text-[14px] text-muted">Email</span>
                 {hasEmail ? (
                   <a href={`mailto:${message.email}`} className="hover:text-gold">
                     {message.email}
@@ -87,7 +87,7 @@ export default async function MessageDetailPage({
                 )}
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-[11px] uppercase tracking-[0.16em] text-faint">
+                <span className="text-[14px] text-muted">
                   Received
                 </span>
                 <span>{formatDateTime(message.createdAt)}</span>

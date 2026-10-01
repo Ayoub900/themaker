@@ -4,13 +4,14 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
 import { deleteMessage, updateMessage, type ActionState } from "@/app/dashboard/actions";
-import { Field, Panel, dashButton, inputClass } from "@/components/dashboard/ui";
+import { ConfirmButton } from "@/components/dashboard/confirm-button";
+import { Field, FormMessage, Panel, dashButton, inputClass } from "@/components/dashboard/ui";
 
 const STATUSES = [
-  { value: "NEW", label: "New" },
+  { value: "NEW", label: "Unread" },
   { value: "READ", label: "Read" },
-  { value: "REPLIED", label: "Replied" },
-  { value: "ARCHIVED", label: "Archived" },
+  { value: "REPLIED", label: "Answered" },
+  { value: "ARCHIVED", label: "Put away (hide from the main list)" },
 ] as const;
 
 function SaveButton() {
@@ -34,11 +35,11 @@ export function MessageEditor({
   const [state, formAction] = useActionState<ActionState, FormData>(updateMessage, {});
 
   return (
-    <Panel title="Handling">
+    <Panel title="What to do with this message">
       <form action={formAction} className="flex flex-col gap-5 p-4 sm:p-6">
         <input type="hidden" name="id" value={id} />
 
-        <Field label="Status">
+        <Field label="Has it been dealt with?">
           {/* Keyed so a save that changes the status remounts the select
               rather than leaving the previous value on screen. */}
           <select
@@ -56,8 +57,8 @@ export function MessageEditor({
         </Field>
 
         <Field
-          label="What we said"
-          hint="A record of the reply, kept so the next person to touch this knows what was promised. It is not emailed from here."
+          label="Copy of your answer"
+          hint="Optional. Paste what you wrote back, so you remember what you promised. This does not send anything — use “Reply by email” above for that."
         >
           <textarea
             name="reply"
@@ -67,21 +68,19 @@ export function MessageEditor({
           />
         </Field>
 
-        <div className="flex flex-wrap items-center gap-4 border-t border-ink/10 pt-5">
-          <SaveButton />
-          <button
-            type="submit"
-            formAction={deleteMessage}
-            formNoValidate
-            className={dashButton.danger}
-          >
-            Delete
-          </button>
-          {state.message ? (
-            <p role="status" className={`text-[13px] ${state.ok ? "text-muted" : "text-gold"}`}>
-              {state.message}
-            </p>
-          ) : null}
+        <div className="flex flex-col gap-4 border-t border-ink/10 pt-5">
+          <div className="flex flex-wrap items-center gap-3">
+            <SaveButton />
+            <ConfirmButton
+              formAction={deleteMessage}
+              formNoValidate
+              confirm="Delete this message for good? This cannot be undone."
+              className={dashButton.danger}
+            >
+              Delete message
+            </ConfirmButton>
+          </div>
+          {state.message ? <FormMessage ok={state.ok}>{state.message}</FormMessage> : null}
         </div>
       </form>
     </Panel>

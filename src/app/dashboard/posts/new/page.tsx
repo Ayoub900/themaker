@@ -5,8 +5,8 @@ export default function NewPostPage() {
   return (
     <>
       <PageHeading
-        title="New journal post"
-        subtitle="Markdown in, a real page out. Drafts are invisible to the site."
+        title="Write a blog article"
+        subtitle="Fill in the form and press save. It stays hidden until you choose “Shown on the website”."
       />
       <PostForm />
     </>

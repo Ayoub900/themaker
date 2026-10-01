@@ -28,35 +28,52 @@ type NavItem = {
   /** Overview would otherwise light up on every nested dashboard route. */
   exact?: boolean;
   badge?: "messages" | "orders";
+  /** Icon colour, so each area of the dashboard has its own hue. */
+  color: string;
 };
 
 type NavGroup = { title: string; items: NavItem[] };
 
 const groups: NavGroup[] = [
   {
-    title: "Workshop",
-    items: [{ href: "/dashboard", label: "Overview", icon: OverviewIcon, exact: true }],
-  },
-  {
-    title: "Trade",
+    title: "Start",
     items: [
-      { href: "/dashboard/orders", label: "Orders", icon: OrdersIcon, badge: "orders" },
-      { href: "/dashboard/messages", label: "Inbox", icon: InboxIcon, badge: "messages" },
+      { href: "/dashboard", label: "Home", icon: OverviewIcon, exact: true, color: "text-gold" },
     ],
   },
   {
-    title: "Bench",
+    title: "Customers",
     items: [
-      { href: "/dashboard/products", label: "Products", icon: ProductsIcon },
-      { href: "/dashboard/posts", label: "Journal", icon: JournalIcon },
+      {
+        href: "/dashboard/orders",
+        label: "Orders",
+        icon: OrdersIcon,
+        badge: "orders",
+        color: "text-amber-600",
+      },
+      {
+        href: "/dashboard/messages",
+        label: "Messages",
+        icon: InboxIcon,
+        badge: "messages",
+        color: "text-sky-600",
+      },
+    ],
+  },
+  {
+    title: "Your website",
+    items: [
+      { href: "/dashboard/products", label: "Products", icon: ProductsIcon, color: "text-violet-600" },
+      { href: "/dashboard/posts", label: "Blog articles", icon: JournalIcon, color: "text-teal-600" },
     ],
   },
 ];
 
 const accountItem: NavItem = {
   href: "/dashboard/account",
-  label: "Account",
+  label: "My account",
   icon: AccountIcon,
+  color: "text-ink-soft",
 };
 
 const allItems = [...groups.flatMap((group) => group.items), accountItem];
@@ -71,7 +88,7 @@ function sectionLabel(pathname: string) {
     .filter((item) => isActive(item, pathname))
     // Prefer the deepest match, so /dashboard/orders beats /dashboard.
     .sort((a, b) => b.href.length - a.href.length)[0];
-  return match?.label ?? "Workshop";
+  return match?.label ?? "Home";
 }
 
 /**
@@ -109,7 +126,7 @@ function NavLink({
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "group relative flex items-center gap-3 border-l-2 py-2.5 pl-4 pr-3 text-[12px] uppercase tracking-[0.14em] transition-colors",
+        "group relative flex items-center gap-3 border-l-2 py-3 pl-4 pr-3 text-[16px] transition-colors",
         active
           ? "border-gold bg-ink/6 text-ink"
           : "border-transparent text-muted hover:border-ink/20 hover:bg-ink/4 hover:text-ink",
@@ -118,12 +135,13 @@ function NavLink({
       <Glyph
         className={cn(
           "size-[18px] shrink-0 transition-colors",
-          active ? "text-gold" : "text-faint group-hover:text-gold",
+          item.color,
+          !active && "opacity-70 group-hover:opacity-100",
         )}
       />
       <span className="flex-1 truncate">{item.label}</span>
       {badge > 0 ? (
-        <span className="flex min-w-5 items-center justify-center bg-gold px-1.5 py-0.5 text-[10px] leading-none text-paper lining-nums tabular-nums">
+        <span className="flex min-w-6 items-center justify-center bg-gold px-1.5 py-1 text-[13px] font-medium leading-none text-paper lining-nums tabular-nums">
           {badge > 99 ? "99+" : badge}
         </span>
       ) : null}
@@ -167,14 +185,14 @@ function SidebarBody({
         />
         <span className="flex flex-col leading-tight">
           <span className="font-serif text-lg">{site.name}</span>
-          <span className="text-[10px] uppercase tracking-[0.2em] text-faint">Workshop</span>
+          <span className="text-[13px] text-muted">Your dashboard</span>
         </span>
       </Link>
 
       <nav aria-label="Dashboard" className="flex-1 overflow-y-auto py-5">
         {groups.map((group) => (
           <div key={group.title} className="mb-5 last:mb-0">
-            <h2 className="px-5 pb-2 text-[10px] uppercase tracking-[0.22em] text-faint">
+            <h2 className="px-5 pb-2 text-[13px] text-muted">
               {group.title}
             </h2>
             <ul className="flex flex-col gap-0.5">
@@ -204,10 +222,10 @@ function SidebarBody({
           href="/"
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center gap-3 border-l-2 border-transparent py-2.5 pl-4 pr-3 text-[12px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-ink/20 hover:bg-ink/4 hover:text-ink"
+          className="group flex items-center gap-3 border-l-2 border-transparent py-3 pl-4 pr-3 text-[16px] text-muted transition-colors hover:border-ink/20 hover:bg-ink/4 hover:text-ink"
         >
           <ExternalIcon className="size-[18px] shrink-0 text-faint transition-colors group-hover:text-gold" />
-          <span className="flex-1 truncate">View site</span>
+          <span className="flex-1 truncate">See my website</span>
         </a>
       </div>
 
@@ -219,8 +237,8 @@ function SidebarBody({
           {(name || email).trim().charAt(0).toUpperCase()}
         </span>
         <span className="flex min-w-0 flex-1 flex-col leading-tight">
-          <span className="truncate text-[13px] text-ink">{name || email}</span>
-          <span className="truncate text-[11px] text-faint">{email}</span>
+          <span className="truncate text-[15px] text-ink">{name || email}</span>
+          <span className="truncate text-[13px] text-muted">{email}</span>
         </span>
       </div>
     </div>
@@ -357,7 +375,7 @@ export function DashboardShell({
             ) : null}
           </button>
 
-          <span className="min-w-0 flex-1 truncate text-[11px] uppercase tracking-[0.2em] text-muted">
+          <span className="min-w-0 flex-1 truncate text-[16px] text-ink">
             {sectionLabel(pathname)}
           </span>
 
@@ -365,7 +383,7 @@ export function DashboardShell({
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="View site"
+            aria-label="See my website"
             className="flex items-center p-2 text-muted transition-colors hover:text-gold"
           >
             <ExternalIcon className="size-5" />
@@ -374,7 +392,7 @@ export function DashboardShell({
           <form action={logout}>
             <button
               type="submit"
-              aria-label="Sign out"
+              aria-label="Log out"
               className="flex items-center p-2 text-muted transition-colors hover:text-gold"
             >
               <SignOutIcon className="size-5" />
@@ -384,7 +402,7 @@ export function DashboardShell({
 
         <main
           id="dashboard-main"
-          className="w-full max-w-[1280px] flex-1 px-4 py-7 sm:px-6 sm:py-9 lg:px-10 lg:py-11"
+          className="w-full flex-1 px-4 py-7 sm:px-6 sm:py-9 lg:px-10 lg:py-11"
         >
           {children}
         </main>
@@ -395,10 +413,10 @@ export function DashboardShell({
           <form action={logout}>
             <button
               type="submit"
-              className="group flex items-center gap-2.5 text-[11px] uppercase tracking-[0.16em] text-muted transition-colors hover:text-gold"
+              className="group flex items-center gap-2.5 text-[15px] text-muted transition-colors hover:text-gold"
             >
-              <SignOutIcon className="size-4 text-faint transition-colors group-hover:text-gold" />
-              Sign out
+              <SignOutIcon className="size-5 text-faint transition-colors group-hover:text-gold" />
+              Log out
             </button>
           </form>
         </div>

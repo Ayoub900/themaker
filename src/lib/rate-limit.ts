@@ -80,3 +80,50 @@ export async function registerFailure(key: string): Promise<ThrottleState> {
 export async function clearThrottle(key: string): Promise<void> {
   await prisma.loginAttempt.deleteMany({ where: { key } });
 }
+
+/* ------------------------------------------------------- general limiter */
+
+export type RateLimitResult = { allowed: boolean; retryAfterSeconds: number };
+
+/**
+ * Fixed-window limiter for public endpoints: at most `limit` calls per `key`
+ * every `windowMs`. It reuses the same table as the login throttle, under an
+ * `rl:` prefix, so it survives restarts and is shared across instances.
+ */
+export async function rateLimit(
+  key: string,
+  { limit, windowMs }: { limit: number; windowMs: number },
+): Promise<RateLimitResult> {
+  const id = `rl:${key}`;
+  const now = new Date();
+  const record = await prisma.loginAttempt.findUnique({ where: { key: id } });
+
+  const open = record !== null && now.getTime() - record.firstAt.getTime() <= windowMs;
+  const count = open ? record.count + 1 : 1;
+  const firstAt = open ? record.firstAt : now;
+
+  await prisma.loginAttempt.upsert({
+    where: { key: id },
+    create: { key: id, count, firstAt },
+    update: { count, firstAt },
+  });
+
+  // Housekeeping: now and then drop windows that ended long ago.
+  if (Math.random() < 0.01) {
+    await prisma.loginAttempt.deleteMany({
+      where: { key: { startsWith: "rl:" }, firstAt: { lt: new Date(now.getTime() - 86_400_000) } },
+    });
+  }
+
+  return {
+    allowed: count <= limit,
+    retryAfterSeconds: Math.max(1, Math.ceil((firstAt.getTime() + windowMs - now.getTime()) / 1000)),
+  };
+}
+
+/** The caller's address as the proxy reports it. */
+export function requestIp(headers: Headers): string {
+  return (
+    headers.get("x-forwarded-for")?.split(",")[0]?.trim() || headers.get("x-real-ip") || "unknown"
+  );
+}

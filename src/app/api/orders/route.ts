@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { currency } from "@/config/site";
 import { prisma } from "@/lib/prisma";
+import { rateLimit, requestIp } from "@/lib/rate-limit";
 import { orderTotals } from "@/lib/money";
 import { makeOrderNumber } from "@/lib/utils";
 import { checkoutSchema, fieldErrors } from "@/lib/validation";
@@ -33,6 +34,17 @@ export async function POST(request: NextRequest) {
 
   if (parsed.data.company) {
     return NextResponse.json({ message: "Order received." }, { status: 202 });
+  }
+
+  const limited = await rateLimit(`orders:${requestIp(request.headers)}`, {
+    limit: 8,
+    windowMs: 10 * 60_000,
+  });
+  if (!limited.allowed) {
+    return NextResponse.json(
+      { message: "Too many orders from this connection. Please try again in a few minutes." },
+      { status: 429, headers: { "Retry-After": String(limited.retryAfterSeconds) } },
+    );
   }
 
   const input = parsed.data;

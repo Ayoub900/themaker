@@ -19,7 +19,7 @@ export default async function EditPostPage({
     <>
       <PageHeading
         title={post.title}
-        subtitle={`${post.category} · last saved ${formatDateTime(post.updatedAt)}`}
+        subtitle={`Last saved ${formatDateTime(post.updatedAt)}`}
         action={<StatusPill status={post.status} />}
       />
       <PostForm post={post} />
