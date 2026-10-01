@@ -2,7 +2,7 @@
  * THE MAKER — global site variables.
  *
  * Single source of truth for anything that appears in more than one place:
- * brand strings, contact details, addresses, opening hours, social links,
+ * brand strings, contact details, addresses, opening hours,
  * navigation, shipping rules and SEO defaults.
  *
  * Change it here, it changes everywhere. Nothing below should be duplicated
@@ -116,12 +116,6 @@ export const openingHours = [
 ] as const;
 
 export const openingHoursSummary = "Visits Thursday–Saturday, 10–18";
-
-export const social = [
-  { label: "Instagram", href: "https://www.instagram.com/themaker.atelier", handle: "@themaker.atelier" },
-  { label: "Pinterest", href: "https://www.pinterest.com/themakeratelier", handle: "themakeratelier" },
-  { label: "YouTube", href: "https://www.youtube.com/@themaker.atelier", handle: "@themaker.atelier" },
-] as const;
 
 /** Primary header navigation. */
 export const mainNav = [

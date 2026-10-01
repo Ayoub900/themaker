@@ -73,24 +73,27 @@ export const about = {
   },
 } as const;
 
-export const makers = [
+/** How an unlacquered surface changes once it leaves the workshop. Used on /about. */
+export const patina = [
   {
-    name: "Salma Bennani",
-    role: "Forge, raising, chasing",
-    note: `Trained in the dinanderie workshops of Fès. Raises every bowl and tray we make.`,
-    photo: {
-      src: "/images/maker-1.jpg",
-      alt: "Hands chasing a pattern into sheet metal",
-    },
+    when: "Day one",
+    title: "Bright",
+    body: "Polished or brushed at the bench and sent out bare. The colour is the metal itself, with nothing laid over it.",
   },
   {
-    name: "Youssef Amrani",
-    role: "Casting, fitting, finishing",
-    note: "Came from architectural restoration. Cuts the patterns and does the final surface on everything.",
-    photo: {
-      src: "/images/maker-2.jpg",
-      alt: "Hands working a detailed metal piece at the bench",
-    },
+    when: "Three months",
+    title: "Warming",
+    body: "The shine softens to honey. Fingerprints stop showing and start settling in, wherever the piece gets handled.",
+  },
+  {
+    when: "One year",
+    title: "Patterned",
+    body: "Darker in the recesses, lighter on the edges you touch. The piece begins to record how it is used.",
+  },
+  {
+    when: "Ten years",
+    title: "Settled",
+    body: "A deep, even brown that protects the metal underneath. A cloth and some polish bring it back to day one whenever you like.",
   },
 ] as const;
 

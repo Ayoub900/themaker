@@ -1,8 +1,11 @@
 import { JsonLd } from "@/components/json-ld";
 import { ButtonLink, Container, Eyebrow, ImageSlot, SectionHeading } from "@/components/ui";
-import { about, makers, marks, process, stats } from "@/config/content";
+import { about, marks, patina, process, stats } from "@/config/content";
 import { address, openingHoursSummary, site } from "@/config/site";
 import { breadcrumbLd, pageMetadata } from "@/lib/seo";
+
+/** Swatches for the patina stages, bright brass through to settled brown. */
+const patinaTones = ["#d9b35a", "#b98d3e", "#8a6430", "#5a3f22"];
 
 export const metadata = pageMetadata({
   title: "About the workshop",
@@ -68,32 +71,26 @@ export default function AboutPage() {
         </Container>
       </section>
 
-      {/* ---------------------------------------------------------- makers */}
+      {/* ---------------------------------------------------------- patina */}
       <section className="bg-parchment py-16 md:py-20">
         <Container className="flex flex-col gap-9">
-          <SectionHeading title="The two of us" />
-          <ul className="grid gap-10 md:grid-cols-2">
-            {makers.map((maker) => (
-              <li key={maker.name} className="flex flex-col gap-4">
-                <ImageSlot
-                  label={`[ portrait — ${maker.name} ]`}
-                  photo={maker.photo}
-                  ratio="1 / 1"
-                  sizes="(min-width: 768px) 45vw, 100vw"
-                  inverse
+          <SectionHeading title="How the metal ages" />
+          <ol className="grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+            {patina.map((stage, i) => (
+              <li key={stage.when} className="flex flex-col gap-4">
+                <span
+                  aria-hidden
+                  className="h-2 w-full rounded-full"
+                  style={{ backgroundColor: patinaTones[i] }}
                 />
-                <div className="flex flex-col gap-1.5">
-                  <h3 className="font-serif text-2xl">{maker.name}</h3>
-                  <span className="text-[11px] uppercase tracking-[0.18em] text-gold">
-                    {maker.role}
-                  </span>
-                  <p className="mt-1 text-[15px] leading-relaxed text-ink-soft">
-                    {maker.note}
-                  </p>
-                </div>
+                <span className="text-[11px] uppercase tracking-[0.18em] text-gold">
+                  {stage.when}
+                </span>
+                <h3 className="font-serif text-[1.5rem] leading-tight">{stage.title}</h3>
+                <p className="text-[15px] leading-[1.75] text-ink-soft">{stage.body}</p>
               </li>
             ))}
-          </ul>
+          </ol>
         </Container>
       </section>
 

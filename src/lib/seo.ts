@@ -12,7 +12,6 @@ import {
   openingHours,
   seo,
   site,
-  social,
 } from "@/config/site";
 import { faqs } from "@/config/content";
 import { imageUrl, type ImageRef } from "@/lib/images";
@@ -156,7 +155,6 @@ export function organizationLd() {
         opens: day.opens,
         closes: day.closes,
       })),
-    sameAs: social.map((channel) => channel.href),
   };
 }
 

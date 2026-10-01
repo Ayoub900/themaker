@@ -12,7 +12,6 @@ import {
   hasWhatsapp,
   openingHoursSummary,
   site,
-  social,
 } from "@/config/site";
 
 export function Footer() {
@@ -103,20 +102,6 @@ export function Footer() {
             <span className="text-[11px] tracking-[0.14em] text-ash/70">
               {copyrightLine}
             </span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-6">
-            {social.map((channel) => (
-              <a
-                key={channel.href}
-                href={channel.href}
-                rel="me noopener noreferrer"
-                target="_blank"
-                className="text-[11px] uppercase tracking-[0.2em] text-ash transition-colors hover:text-gold"
-              >
-                {channel.label}
-              </a>
-            ))}
           </div>
         </div>
 
