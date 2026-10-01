@@ -104,4 +104,30 @@ export const products: SeedProduct[] = [
       { label: "Size", value: "120 cm high" },
     ],
   },
+  {
+    slug: "damaa-floor-lamp",
+    name: "Damâa floor lamp",
+    reference: "03 / 24",
+    material: "Solid brass, hand-pierced",
+    collection: "Light",
+    summary:
+      "A 1.20 m hand-pierced brass floor lamp in the elongated Damâa, or teardrop, shape, on a turned brass base.",
+    description:
+      "A floor lamp handcrafted from solid brass and sculpted into the graceful, elongated Damâa — the teardrop — rising from a turned brass base to a slender point. The whole surface is hand-pierced with geometric and floral filigree.\n\n" +
+      "Lit, the light filters through the cutouts and casts complex shadow patterns across the surrounding walls and ceiling, a warm and deeply atmospheric light. Every piercing is made by hand, so no two pieces are exactly alike.\n\n" +
+      "At 1.20 m high it is a focal point in its own right: a living room, a grand entryway, an empty corner or a hotel lobby. As much a piece of sculpture as a light, it sits well in almost any interior.",
+    priceCents: 300_000,
+    stock: 1,
+    leadTime: MADE,
+    dimensions: "1200 mm high",
+    care: "Dust with a soft dry cloth. Mild brass polish if you want it bright again.",
+    imageSlot: "[ product — brass teardrop floor lamp ]",
+    featured: true,
+    specs: [
+      { label: "Metal", value: "Solid brass" },
+      { label: "Work", value: "Hand-pierced geometric and floral filigree" },
+      { label: "Form", value: "Elongated teardrop on a turned base" },
+      { label: "Size", value: "120 cm high" },
+    ],
+  },
 ];

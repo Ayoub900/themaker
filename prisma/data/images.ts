@@ -40,4 +40,7 @@ export const productImages: Record<string, SeedImage[]> = {
   "flamla-pendant-light": [
     { id: "66dd0ca005180cd59024cbd3.jpg", alt: "Tall teardrop-shaped hand-pierced brass Flamla pendant, lit, in the showroom" },
   ],
+  "damaa-floor-lamp": [
+    { id: "977e9274434b1b84c40319ad.jpg", alt: "Tall hand-pierced brass teardrop floor lamp, lit, in the workshop" },
+  ],
 };
